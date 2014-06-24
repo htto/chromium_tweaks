@@ -1,0 +1,184 @@
+diff -pruN a/chromium-33.0.1750.29/chrome/browser/defaults.cc b/chromium-33.0.1750.29/chrome/browser/defaults.cc
+--- a/chromium-33.0.1750.29/chrome/browser/defaults.cc	2014-01-17 04:36:32.000000000 +0100
++++ b/chromium-33.0.1750.29/chrome/browser/defaults.cc	2014-01-19 19:41:43.504631059 +0100
+@@ -14,7 +14,7 @@ const bool kCanToggleSystemTitleBar = tr
+ #endif
+ #endif
+ 
+-const int kOmniboxFontPixelSize = 16;
++const int kOmniboxFontPixelSize = 11;
+ 
+ const bool kRestorePopups = false;
+ 
+diff -pruN a/chromium-33.0.1750.29/chrome/browser/defaults.h b/chromium-33.0.1750.29/chrome/browser/defaults.h
+--- a/chromium-33.0.1750.29/chrome/browser/defaults.h	2014-01-17 04:36:32.000000000 +0100
++++ b/chromium-33.0.1750.29/chrome/browser/defaults.h	2014-01-19 13:09:32.141292701 +0100
+@@ -28,9 +28,9 @@ extern const int kOmniboxFontPixelSize;
+ // all translation units that do this.
+ #if defined(TOOLKIT_VIEWS)
+ // Windows and Chrome OS have bigger shadows in the tab art.
+-const int kMiniTabWidth = 64;
++const int kMiniTabWidth = 60;
+ #else
+-const int kMiniTabWidth = 56;
++const int kMiniTabWidth = 52;
+ #endif
+ 
+ // Should session restore restore popup windows?
+diff -pruN a/chromium-33.0.1750.29/chrome/browser/ui/views/frame/app_panel_browser_frame_view.cc b/chromium-33.0.1750.29/chrome/browser/ui/views/frame/app_panel_browser_frame_view.cc
+--- a/chromium-33.0.1750.29/chrome/browser/ui/views/frame/app_panel_browser_frame_view.cc	2014-01-17 04:36:31.000000000 +0100
++++ b/chromium-33.0.1750.29/chrome/browser/ui/views/frame/app_panel_browser_frame_view.cc	2014-01-19 12:43:48.774610892 +0100
+@@ -44,7 +44,7 @@ const int kTitlebarTopAndBottomEdgeThick
+ // The icon is inset 6 px from the left frame border.
+ const int kIconLeftSpacing = 6;
+ // The icon never shrinks below 16 px on a side.
+-const int kIconMinimumSize = 16;
++const int kIconMinimumSize = 12;
+ // There is a 4 px gap between the icon and the title text.
+ const int kIconTitleSpacing = 4;
+ // There is a 5 px gap between the title text and the close button.
+diff -pruN a/chromium-33.0.1750.29/chrome/browser/ui/views/frame/opaque_browser_frame_view.cc b/chromium-33.0.1750.29/chrome/browser/ui/views/frame/opaque_browser_frame_view.cc
+--- a/chromium-33.0.1750.29/chrome/browser/ui/views/frame/opaque_browser_frame_view.cc	2014-01-17 04:36:31.000000000 +0100
++++ b/chromium-33.0.1750.29/chrome/browser/ui/views/frame/opaque_browser_frame_view.cc	2014-01-19 12:43:48.774610892 +0100
+@@ -64,7 +64,7 @@ const int kTopResizeAdjust = 1;
+ const int kContentEdgeShadowThickness = 2;
+ 
+ // The icon never shrinks below 16 px on a side.
+-const int kIconMinimumSize = 16;
++const int kIconMinimumSize = 12;
+ 
+ // The top 3 px of the tabstrip is shadow; in maximized mode we push this off
+ // the top of the screen so the tabs appear flush against the screen edge.
+diff -pruN a/chromium-33.0.1750.29/chrome/browser/ui/views/frame/opaque_browser_frame_view_layout.cc b/chromium-33.0.1750.29/chrome/browser/ui/views/frame/opaque_browser_frame_view_layout.cc
+--- a/chromium-33.0.1750.29/chrome/browser/ui/views/frame/opaque_browser_frame_view_layout.cc	2014-01-17 04:36:31.000000000 +0100
++++ b/chromium-33.0.1750.29/chrome/browser/ui/views/frame/opaque_browser_frame_view_layout.cc	2014-01-19 12:43:48.774610892 +0100
+@@ -22,14 +22,14 @@ const int kNonClientRestoredExtraThickne
+ 
+ // The titlebar never shrinks too short to show the caption button plus some
+ // padding below it.
+-const int kCaptionButtonHeightWithPadding = 19;
++const int kCaptionButtonHeightWithPadding = 19;
+ 
+ // There is a 5 px gap between the title text and the caption buttons.
+ const int kTitleLogoSpacing = 5;
+ 
+ // The frame border is only visible in restored mode and is hardcoded to 4 px on
+ // each side regardless of the system window border size.
+-const int kFrameBorderThickness = 4;
++const int kFrameBorderThickness = 2;
+ 
+ // The titlebar has a 2 px 3D edge along the top and bottom.
+ const int kTitlebarTopAndBottomEdgeThickness = 2;
+diff -pruN a/chromium-33.0.1750.29/chrome/browser/ui/views/panels/panel_frame_view.cc b/chromium-33.0.1750.29/chrome/browser/ui/views/panels/panel_frame_view.cc
+--- a/chromium-33.0.1750.29/chrome/browser/ui/views/panels/panel_frame_view.cc	2014-01-17 04:36:31.000000000 +0100
++++ b/chromium-33.0.1750.29/chrome/browser/ui/views/panels/panel_frame_view.cc	2014-01-19 13:16:04.134629880 +0100
+@@ -41,7 +41,7 @@ namespace {
+ const int kNonAeroBorderThickness = 1;
+ 
+ // The height and width in pixels of the icon.
+-const int kIconSize = 16;
++const int kIconSize = 12;
+ 
+ // The extra padding between the button and the top edge.
+ const int kExtraPaddingBetweenButtonAndTop = 1;
+diff -pruN a/chromium-33.0.1750.29/chrome/browser/ui/views/tabs/tab.cc b/chromium-33.0.1750.29/chrome/browser/ui/views/tabs/tab.cc
+--- a/chromium-33.0.1750.29/chrome/browser/ui/views/tabs/tab.cc	2014-01-17 04:36:32.000000000 +0100
++++ b/chromium-33.0.1750.29/chrome/browser/ui/views/tabs/tab.cc	2014-01-19 12:43:48.777944226 +0100
+@@ -178,7 +178,7 @@ static const int kFaviconTitleSpacing =
+ static const int kTitleTextOffsetYAsh = 1;
+ static const int kTitleTextOffsetY = 0;
+ static const int kTitleCloseButtonSpacing = 3;
+-static const int kStandardTitleWidth = 175;
++static const int kStandardTitleWidth = 125;
+ // Additional vertical offset for close button relative to top of tab.
+ // Ash needs this to match the text vertical position.
+ static const int kCloseButtonVertFuzzAsh = 1;
+diff -pruN a/chromium-33.0.1750.29/chrome/browser/ui/views/toolbar/wrench_menu.cc b/chromium-33.0.1750.29/chrome/browser/ui/views/toolbar/wrench_menu.cc
+--- a/chromium-33.0.1750.29/chrome/browser/ui/views/toolbar/wrench_menu.cc	2014-01-17 04:36:32.000000000 +0100
++++ b/chromium-33.0.1750.29/chrome/browser/ui/views/toolbar/wrench_menu.cc	2014-01-19 18:38:06.827926946 +0100
+@@ -77,10 +77,10 @@ namespace {
+ // Horizontal padding on the edges of the buttons.
+ const int kHorizontalPadding = 6;
+ // Horizontal padding for a touch enabled menu.
+-const int kHorizontalTouchPadding = 15;
++const int kHorizontalTouchPadding = 6;
+ 
+ // Menu items which have embedded buttons should have this height in pixel.
+-const int kMenuItemContainingButtonsHeight = 43;
++const int kMenuItemContainingButtonsHeight = 34;
+ 
+ // Returns true if |command_id| identifies a bookmark menu item.
+ bool IsBookmarkCommand(int command_id) {
+diff -pruN a/chromium-33.0.1750.29/ui/views/controls/menu/menu_config.cc b/chromium-33.0.1750.29/ui/views/controls/menu/menu_config.cc
+--- a/chromium-33.0.1750.29/ui/views/controls/menu/menu_config.cc	2014-01-17 04:36:39.000000000 +0100
++++ b/chromium-33.0.1750.29/ui/views/controls/menu/menu_config.cc	2014-01-19 18:41:21.644595524 +0100
+@@ -50,10 +50,12 @@ MenuConfig::MenuConfig(const ui::NativeT
+       corner_radius(0) {
+   // Use 40px tall menu items when running in touch optimized mode.
+   // For Windows use 40px tall menu items when running in touch optimized mode.
++#if 0
+   if (ui::GetDisplayLayout() == ui::LAYOUT_TOUCH) {
+     item_top_margin = item_no_icon_top_margin = 12;
+     item_bottom_margin = item_no_icon_bottom_margin = 13;
+   }
++#endif
+   Init(theme);
+ }
+ 
+diff -pruN a/chromium-33.0.1750.29/ui/views/controls/menu/menu_config_views.cc b/chromium-33.0.1750.29/ui/views/controls/menu/menu_config_views.cc
+--- a/chromium-33.0.1750.29/ui/views/controls/menu/menu_config_views.cc	2014-01-17 04:36:39.000000000 +0100
++++ b/chromium-33.0.1750.29/ui/views/controls/menu/menu_config_views.cc	2014-01-19 19:42:19.421298077 +0100
+@@ -33,19 +33,19 @@ void MenuConfig::InitAura(const ui::Nati
+   text_color = theme->GetSystemColor(
+       ui::NativeTheme::kColorId_EnabledMenuItemForegroundColor);
+   submenu_horizontal_inset = 1;
+-  arrow_to_edge_padding = 20;
++  //arrow_to_edge_padding = 12;
+   ui::ResourceBundle& rb = ui::ResourceBundle::GetSharedInstance();
+   arrow_width =
+       rb.GetImageNamed(IDR_MENU_HIERARCHY_ARROW).ToImageSkia()->width();
+   gfx::ImageSkia check = GetMenuCheckImage(false);
+   check_height = check.height();
+-  item_min_height = 29;
+-  separator_spacing_height = 7;
+-  separator_lower_height = 8;
+-  separator_upper_height = 8;
++  item_min_height = 12;
++  //separator_spacing_height = 3;
++  //separator_lower_height = 4;
++  //separator_upper_height = 4;
+-  label_to_arrow_padding = 20;
+-  label_to_minor_text_padding = 20;
+-  always_use_icon_to_label_padding = true;
++  //label_to_arrow_padding = 20;
++  //label_to_minor_text_padding = 20;
++  //always_use_icon_to_label_padding = true;
+   align_arrow_and_shortcut = true;
+   offset_context_menus = true;
+   corner_radius = kMenuCornerRadiusForAura;
+diff -pruN a/chromium-33.0.1750.29/ui/views/window/custom_frame_view.cc b/chromium-33.0.1750.29/ui/views/window/custom_frame_view.cc
+--- a/chromium-33.0.1750.29/ui/views/window/custom_frame_view.cc	2014-01-17 04:36:40.000000000 +0100
++++ b/chromium-33.0.1750.29/ui/views/window/custom_frame_view.cc	2014-01-19 12:44:38.877944718 +0100
+@@ -40,19 +40,19 @@ namespace {
+ 
+ // The frame border is only visible in restored mode and is hardcoded to 4 px on
+ // each side regardless of the system window border size.
+-const int kFrameBorderThickness = 4;
++const int kFrameBorderThickness = 2;
+ // In the window corners, the resize areas don't actually expand bigger, but the
+ // 16 px at the end of each edge triggers diagonal resizing.
+ const int kResizeAreaCornerSize = 16;
+ // The titlebar never shrinks too short to show the caption button plus some
+ // padding below it.
+-const int kCaptionButtonHeightWithPadding = 19;
++const int kCaptionButtonHeightWithPadding = 19;
+ // The titlebar has a 2 px 3D edge along the top and bottom.
+ const int kTitlebarTopAndBottomEdgeThickness = 2;
+ // The icon is inset 2 px from the left frame border.
+ const int kIconLeftSpacing = 2;
+ // The icon never shrinks below 16 px on a side.
+-const int kIconMinimumSize = 16;
++const int kIconMinimumSize = 12;
+ // The space between the window icon and the title text.
+ const int kTitleIconOffsetX = 4;
+ // The space between the title text and the caption buttons.

@@ -1,0 +1,93 @@
+diff -pruN a/chromium-14.0.803.0/chrome/browser/defaults.cc b/chromium-14.0.803.0/chrome/browser/defaults.cc
+--- a/chromium-14.0.803.0/chrome/browser/defaults.cc	2011-06-26 11:15:18.000000000 +0200
++++ b/chromium-14.0.803.0/chrome/browser/defaults.cc	2011-07-04 15:12:38.148476573 +0200
+@@ -51,7 +51,7 @@ const bool kCanToggleSystemTitleBar = tr
+ // Windows and Chrome OS have bigger shadows in the tab art.
+ const int kMiniTabWidth = 64;
+ #else
+-const int kMiniTabWidth = 56;
++const int kMiniTabWidth = 36;
+ #endif  // defined(TOOLKIT_VIEWS)
+ 
+ #if !defined(OS_CHROMEOS)
+diff -pruN a/chromium-14.0.803.0/chrome/browser/ui/gtk/download/download_shelf_gtk.cc b/chromium-14.0.803.0/chrome/browser/ui/gtk/download/download_shelf_gtk.cc
+--- a/chromium-14.0.803.0/chrome/browser/ui/gtk/download/download_shelf_gtk.cc	2011-06-26 11:15:13.000000000 +0200
++++ b/chromium-14.0.803.0/chrome/browser/ui/gtk/download/download_shelf_gtk.cc	2011-07-03 15:37:05.636972555 +0200
+@@ -39,13 +39,13 @@ const int kDownloadItemPadding = 10;
+ 
+ // Padding between the top/bottom of the download widgets and the edge of the
+ // shelf.
+-const int kTopBottomPadding = 4;
++const int kTopBottomPadding = 1;
+ 
+ // Padding between the left side of the shelf and the first download item.
+-const int kLeftPadding = 2;
++const int kLeftPadding = 1;
+ 
+ // Padding between the right side of the shelf and the close button.
+-const int kRightPadding = 10;
++const int kRightPadding = 6;
+ 
+ // Speed of the shelf show/hide animation.
+ const int kShelfAnimationDurationMs = 120;
+diff -pruN a/chromium-14.0.803.0/chrome/browser/ui/gtk/tabs/tab_renderer_gtk.cc b/chromium-14.0.803.0/chrome/browser/ui/gtk/tabs/tab_renderer_gtk.cc
+--- a/chromium-14.0.803.0/chrome/browser/ui/gtk/tabs/tab_renderer_gtk.cc	2011-06-26 11:15:13.000000000 +0200
++++ b/chromium-14.0.803.0/chrome/browser/ui/gtk/tabs/tab_renderer_gtk.cc	2011-07-08 15:22:33.182508880 +0200
+@@ -36,14 +36,14 @@
+ namespace {
+ 
+ const int kFontPixelSize = 12;
+-const int kLeftPadding = 16;
+-const int kTopPadding = 6;
++const int kLeftPadding = 10;
++const int kTopPadding = 7;
+ const int kRightPadding = 15;
+ const int kBottomPadding = 5;
+ const int kDropShadowHeight = 2;
+-const int kFaviconTitleSpacing = 4;
++const int kFaviconTitleSpacing = 2;
+ const int kTitleCloseButtonSpacing = 5;
+-const int kStandardTitleWidth = 175;
++const int kStandardTitleWidth = 125;
+ const int kDropShadowOffset = 2;
+ const int kInactiveTabBackgroundOffsetY = 15;
+ 
+diff -pruN a/chromium-14.0.803.0/chrome/browser/ui/gtk/tabs/tab_strip_gtk.cc b/chromium-14.0.803.0/chrome/browser/ui/gtk/tabs/tab_strip_gtk.cc
+--- a/chromium-14.0.803.0/chrome/browser/ui/gtk/tabs/tab_strip_gtk.cc	2011-06-26 11:15:13.000000000 +0200
++++ b/chromium-14.0.803.0/chrome/browser/ui/gtk/tabs/tab_strip_gtk.cc	2011-07-08 15:35:17.839949346 +0200
+@@ -46,7 +46,7 @@ const int kAnimateToBoundsDurationMs = 1
+ const int kMiniTabAnimationDurationMs = 150;
+ 
+ const int kNewTabButtonHOffset = -5;
+-const int kNewTabButtonVOffset = 5;
++const int kNewTabButtonVOffset = 0;
+ 
+ // The delay between when the mouse leaves the tabstrip and the resize animation
+ // is started.
+@@ -60,7 +60,7 @@ const int kHorizontalMoveThreshold = 16;
+ 
+ // The horizontal offset from one tab to the next, which results in overlapping
+ // tabs.
+-const int kTabHOffset = -16;
++const int kTabHOffset = -7;
+ 
+ // Inverse ratio of the width of a tab edge to the width of the tab. When
+ // hovering over the left or right edge of a tab, the drop indicator will
+@@ -367,9 +367,16 @@ class RemoveTabAnimation : public TabStr
+       double start_width = start_unselected_width_;
+       // Make sure target_width is at least abs(kTabHOffset), otherwise if
+       // less than kTabHOffset during layout tabs get negatively offset.
+-      double target_width =
++      double target_width = -kTabHOffset;
++#if 0
++	  // For default chromium that's _always_
++	  // std::max(16, (16 + 15) + -16) => 16 => -kTabHOffset
++	  // Anyway, the target should be just the inverted hoffset to get to
++	  // hoffset - -hoffset => 0
+           std::max(abs(kTabHOffset),
+                    TabGtk::GetMinimumUnselectedSize().width() + kTabHOffset);
++#endif
++
+       return animation_.CurrentValueBetween(start_width, target_width);
+     }
+ 
