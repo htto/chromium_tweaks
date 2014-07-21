@@ -1,23 +1,23 @@
-diff -pruN a/chromium-37.0.2062.20/chrome/browser/extensions/extension_service.cc b/chromium-37.0.2062.20/chrome/browser/extensions/extension_service.cc
---- a/chromium-37.0.2062.20/chrome/browser/extensions/extension_service.cc	2014-07-15 23:19:20.000000000 +0200
-+++ b/chromium-37.0.2062.20/chrome/browser/extensions/extension_service.cc	2014-07-21 11:29:03.864678045 +0200
-@@ -1064,13 +1064,6 @@ void ExtensionService::NotifyExtensionLo
-     ThemeSource* theme_source = new ThemeSource(profile_);
+diff -pruN a/chromium-35.0.1916.47/chrome/browser/extensions/extension_service.cc b/chromium-35.0.1916.47/chrome/browser/extensions/extension_service.cc
+--- a/chromium-35.0.1916.47/chrome/browser/extensions/extension_service.cc	2014-04-16 22:32:36.000000000 +0200
++++ b/chromium-35.0.1916.47/chrome/browser/extensions/extension_service.cc	2014-04-17 09:56:24.598987406 +0200
+@@ -1083,13 +1083,6 @@ void ExtensionService::NotifyExtensionLo
      content::URLDataSource::Add(profile_, theme_source);
    }
 -
 -  // Same for chrome://thumb/ resources.
--  if (permissions_data->HasHostPermission(
--          GURL(chrome::kChromeUIThumbnailURL))) {
+-  if (extensions::PermissionsData::HasHostPermission(
+-          extension, GURL(chrome::kChromeUIThumbnailURL))) {
 -    ThumbnailSource* thumbnail_source = new ThumbnailSource(profile_, false);
 -    content::URLDataSource::Add(profile_, thumbnail_source);
 -  }
  #endif
  }
  
-diff -pruN a/chromium-37.0.2062.20/chrome/browser/history/top_sites_backend.cc b/chromium-37.0.2062.20/chrome/browser/history/top_sites_backend.cc
---- a/chromium-37.0.2062.20/chrome/browser/history/top_sites_backend.cc	2014-07-15 23:19:21.000000000 +0200
-+++ b/chromium-37.0.2062.20/chrome/browser/history/top_sites_backend.cc	2014-07-21 11:29:03.868011379 +0200
+ void ExtensionService::NotifyExtensionUnloaded(
+diff -pruN a/chromium-35.0.1916.47/chrome/browser/history/top_sites_backend.cc b/chromium-35.0.1916.47/chrome/browser/history/top_sites_backend.cc
+--- a/chromium-35.0.1916.47/chrome/browser/history/top_sites_backend.cc	2014-04-16 22:32:37.000000000 +0200
++++ b/chromium-35.0.1916.47/chrome/browser/history/top_sites_backend.cc	2014-04-17 09:56:24.598987406 +0200
 @@ -17,64 +17,34 @@ using content::BrowserThread;
  namespace history {
  
@@ -84,10 +84,10 @@ diff -pruN a/chromium-37.0.2062.20/chrome/browser/history/top_sites_backend.cc b
  }
  
  TopSitesBackend::~TopSitesBackend() {
-diff -pruN a/chromium-37.0.2062.20/chrome/browser/profiles/profile_impl.cc b/chromium-37.0.2062.20/chrome/browser/profiles/profile_impl.cc
---- a/chromium-37.0.2062.20/chrome/browser/profiles/profile_impl.cc	2014-07-15 23:19:18.000000000 +0200
-+++ b/chromium-37.0.2062.20/chrome/browser/profiles/profile_impl.cc	2014-07-21 11:29:03.868011379 +0200
-@@ -1042,15 +1042,11 @@ Time ProfileImpl::GetStartTime() const {
+diff -pruN a/chromium-35.0.1916.47/chrome/browser/profiles/profile_impl.cc b/chromium-35.0.1916.47/chrome/browser/profiles/profile_impl.cc
+--- a/chromium-35.0.1916.47/chrome/browser/profiles/profile_impl.cc	2014-04-16 22:32:28.000000000 +0200
++++ b/chromium-35.0.1916.47/chrome/browser/profiles/profile_impl.cc	2014-04-17 09:56:24.598987406 +0200
+@@ -1060,15 +1060,11 @@ Time ProfileImpl::GetStartTime() const {
  }
  
  history::TopSites* ProfileImpl::GetTopSites() {
@@ -105,32 +105,9 @@ diff -pruN a/chromium-37.0.2062.20/chrome/browser/profiles/profile_impl.cc b/chr
  }
  
  void ProfileImpl::OnDefaultZoomLevelChanged() {
-diff -pruN a/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.html b/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.html
---- a/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.html	2014-07-15 23:19:28.000000000 +0200
-+++ b/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.html	2014-07-21 11:29:18.208011519 +0200
-@@ -12,19 +12,6 @@
- </head>
- <body>
-   <div id="ntp-contents">
--    <div id="most-visited">
--      <div id="mv-tiles"></div>
--      <!-- Notification shown when a tile is blacklisted. -->
--      <div id="mv-notice" class="mv-notice-hide">
--        <span id="mv-msg"></span>
--        <!-- Links in the notification. -->
--        <span id="mv-notice-links">
--          <span id="mv-undo" tabIndex="1"></span>
--          <span id="mv-restore" tabIndex="1"></span>
--          <button id="mv-notice-x" tabIndex="1" class="mv-x"></button>
--        </span>
--      </div>
--    </div>
-     <div id="attribution"><div id="attribution-text"></div></div>
-   </div>
- </body>
-diff -pruN a/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.js b/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.js
---- a/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.js	2014-07-15 23:19:28.000000000 +0200
-+++ b/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.js	2014-07-21 11:29:18.208011519 +0200
+diff -pruN a/chromium-35.0.1916.47/chrome/browser/resources/local_ntp/local_ntp.js b/chromium-35.0.1916.47/chrome/browser/resources/local_ntp/local_ntp.js
+--- a/chromium-35.0.1916.47/chrome/browser/resources/local_ntp/local_ntp.js	2014-04-16 22:32:29.000000000 +0200
++++ b/chromium-35.0.1916.47/chrome/browser/resources/local_ntp/local_ntp.js	2014-04-17 09:56:24.599987406 +0200
 @@ -221,19 +221,19 @@ var TILE_MARGIN_START = 20;
  
  
@@ -163,52 +140,10 @@ diff -pruN a/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.
    setCustomThemeStyle(info);
    renderTiles();
  }
-@@ -919,17 +918,10 @@ function getEmbeddedSearchApiHandle() {
-  * Google-provided page.
-  */
- function init() {
--  tilesContainer = $(IDS.TILES);
-   notification = $(IDS.NOTIFICATION);
-   attribution = $(IDS.ATTRIBUTION);
-   ntpContents = $(IDS.NTP_CONTENTS);
- 
--  for (var i = 0; i < NUM_ROWS; i++) {
--    var row = document.createElement('div');
--    row.classList.add(CLASSES.ROW);
--    tilesContainer.appendChild(row);
--  }
--
-   if (configData.isGooglePage) {
-     var logo = document.createElement('div');
-     logo.id = IDS.LOGO;
-@@ -965,7 +957,6 @@ function init() {
-   var notificationCloseButton = $(IDS.NOTIFICATION_CLOSE_BUTTON);
-   notificationCloseButton.addEventListener('click', hideNotification);
- 
--  userInitiatedMostVisitedChange = false;
-   window.addEventListener('resize', onResize);
-   onResize();
- 
-@@ -973,7 +964,6 @@ function init() {
- 
-   ntpApiHandle = topLevelHandle.newTabPage;
-   ntpApiHandle.onthemechange = onThemeChange;
--  ntpApiHandle.onmostvisitedchange = onMostVisitedChange;
- 
-   ntpApiHandle.oninputstart = onInputStart;
-   ntpApiHandle.oninputcancel = restoreNtp;
-@@ -982,7 +972,6 @@ function init() {
-     onInputStart();
- 
-   onThemeChange();
--  onMostVisitedChange();
- 
-   searchboxApiHandle = topLevelHandle.searchBox;
- 
-diff -pruN a/chromium-37.0.2062.20/chrome/browser/search/instant_service.cc b/chromium-37.0.2062.20/chrome/browser/search/instant_service.cc
---- a/chromium-37.0.2062.20/chrome/browser/search/instant_service.cc	2014-07-15 23:19:17.000000000 +0200
-+++ b/chromium-37.0.2062.20/chrome/browser/search/instant_service.cc	2014-07-21 11:29:03.868011379 +0200
-@@ -117,18 +117,10 @@ InstantService::InstantService(Profile*
+diff -pruN a/chromium-35.0.1916.47/chrome/browser/search/instant_service.cc b/chromium-35.0.1916.47/chrome/browser/search/instant_service.cc
+--- a/chromium-35.0.1916.47/chrome/browser/search/instant_service.cc	2014-04-16 22:32:38.000000000 +0200
++++ b/chromium-35.0.1916.47/chrome/browser/search/instant_service.cc	2014-04-17 09:56:24.599987406 +0200
+@@ -109,18 +109,10 @@ InstantService::InstantService(Profile*
  
    // TODO(aurimas) remove this #if once instant_service.cc is no longer compiled
    // on Android.
@@ -227,9 +162,9 @@ diff -pruN a/chromium-37.0.2062.20/chrome/browser/search/instant_service.cc b/ch
  }
  
  InstantService::~InstantService() {
-diff -pruN a/chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_policy_impl.cc b/chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
---- a/chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2014-07-15 23:19:28.000000000 +0200
-+++ b/chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2014-07-21 11:29:03.868011379 +0200
+diff -pruN a/chromium-35.0.1916.47/chrome/browser/ui/search/search_ipc_router_policy_impl.cc b/chromium-35.0.1916.47/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
+--- a/chromium-35.0.1916.47/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2014-04-16 22:32:27.000000000 +0200
++++ b/chromium-35.0.1916.47/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2014-04-17 09:56:24.599987406 +0200
 @@ -23,7 +23,7 @@ SearchIPCRouterPolicyImpl::SearchIPCRout
  SearchIPCRouterPolicyImpl::~SearchIPCRouterPolicyImpl() {}
  
@@ -276,18 +211,30 @@ diff -pruN a/chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_po
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldSubmitQuery() {
-diff -pruN a/chromium-37.0.2062.20/chrome/browser/ui/webui/ntp/new_tab_ui.cc b/chromium-37.0.2062.20/chrome/browser/ui/webui/ntp/new_tab_ui.cc
---- a/chromium-37.0.2062.20/chrome/browser/ui/webui/ntp/new_tab_ui.cc	2014-07-15 23:19:29.000000000 +0200
-+++ b/chromium-37.0.2062.20/chrome/browser/ui/webui/ntp/new_tab_ui.cc	2014-07-21 11:29:03.868011379 +0200
-@@ -94,7 +94,6 @@ NewTabUI::NewTabUI(content::WebUI* web_u
+diff -pruN a/chromium-35.0.1916.47/chrome/browser/ui/webui/ntp/app_launcher_handler.cc b/chromium-35.0.1916.47/chrome/browser/ui/webui/ntp/app_launcher_handler.cc
+--- a/chromium-35.0.1916.47/chrome/browser/ui/webui/ntp/app_launcher_handler.cc	2014-04-16 22:32:23.000000000 +0200
++++ b/chromium-35.0.1916.47/chrome/browser/ui/webui/ntp/app_launcher_handler.cc	2014-04-17 09:56:24.599987406 +0200
+@@ -389,7 +389,7 @@ void AppLauncherHandler::FillAppDictiona
+   dictionary->SetBoolean("disableCreateAppShortcut", true);
+ #endif
+ 
+-#if defined(OS_CHROMEOS)
++#if 1
+   // Making shortcut does not make sense on ChromeOS because it does not have
+   // a desktop.
+   dictionary->SetBoolean("disableCreateAppShortcut", true);
+diff -pruN a/chromium-35.0.1916.47/chrome/browser/ui/webui/ntp/new_tab_ui.cc b/chromium-35.0.1916.47/chrome/browser/ui/webui/ntp/new_tab_ui.cc
+--- a/chromium-35.0.1916.47/chrome/browser/ui/webui/ntp/new_tab_ui.cc	2014-04-16 22:32:23.000000000 +0200
++++ b/chromium-35.0.1916.47/chrome/browser/ui/webui/ntp/new_tab_ui.cc	2014-04-17 09:56:24.599987406 +0200
+@@ -103,7 +103,6 @@ NewTabUI::NewTabUI(content::WebUI* web_u
    if (!GetProfile()->IsOffTheRecord()) {
      web_ui->AddMessageHandler(new browser_sync::ForeignSessionHandler());
      web_ui->AddMessageHandler(new MetricsHandler());
 -    web_ui->AddMessageHandler(new MostVisitedHandler());
      web_ui->AddMessageHandler(new RecentlyClosedTabsHandler());
+ #if !defined(OS_ANDROID)
      web_ui->AddMessageHandler(new FaviconWebUIHandler());
-     web_ui->AddMessageHandler(new NewTabPageHandler());
-@@ -225,7 +224,6 @@ void NewTabUI::RegisterProfilePrefs(
+@@ -253,7 +252,6 @@ void NewTabUI::RegisterProfilePrefs(
    NewTabPageHandler::RegisterProfilePrefs(registry);
    if (NewTabUI::IsDiscoveryInNTPEnabled())
      SuggestionsHandler::RegisterProfilePrefs(registry);
