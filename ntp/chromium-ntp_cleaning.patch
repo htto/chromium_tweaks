@@ -227,6 +227,24 @@ diff -pruN a/chromium-37.0.2062.20/chrome/browser/search/instant_service.cc b/ch
  }
  
  InstantService::~InstantService() {
+diff -pruN a/chromium-37.0.2062.20/chrome/browser/search/search.cc b/chromium-37.0.2062.20/chrome/browser/search/search.cc
+--- a/chromium-37.0.2062.20/chrome/browser/search/search.cc	2014-07-15 23:19:29.000000000 +0200
++++ b/chromium-37.0.2062.20/chrome/browser/search/search.cc	2014-07-21 11:29:03.868011379 +0200
+@@ -298,13 +298,7 @@ bool IsURLAllowedForSupervisedUser(const
+ NewTabURLState IsValidNewTabURL(Profile* profile, const GURL& new_tab_url) {
+   if (profile->IsOffTheRecord())
+     return NEW_TAB_URL_INCOGNITO;
+-  if (!new_tab_url.is_valid())
+-    return NEW_TAB_URL_NOT_SET;
+-  if (!new_tab_url.SchemeIsSecure())
+-    return NEW_TAB_URL_INSECURE;
+-  if (!IsURLAllowedForSupervisedUser(new_tab_url, profile))
+-    return NEW_TAB_URL_BLOCKED;
+-  return NEW_TAB_URL_VALID;
++  return NEW_TAB_URL_NOT_SET;
+ }
+ 
+ // Used to look up the URL to use for the New Tab page. Also tracks how we
 diff -pruN a/chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_policy_impl.cc b/chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
 --- a/chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2014-07-15 23:19:28.000000000 +0200
 +++ b/chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2014-07-21 11:29:03.868011379 +0200
