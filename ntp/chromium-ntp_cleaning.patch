@@ -155,14 +155,6 @@ diff -pruN a/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.
  
  
  /**
-@@ -327,7 +327,6 @@ function onThemeChange() {
-                     info.imageVerticalAlignment].join(' ').trim();
-   document.body.style.background = background;
-   document.body.classList.toggle(CLASSES.ALTERNATE_LOGO, info.alternateLogo);
--  updateThemeAttribution(info.attributionUrl);
-   setCustomThemeStyle(info);
-   renderTiles();
- }
 @@ -919,17 +918,10 @@ function getEmbeddedSearchApiHandle() {
   * Google-provided page.
   */
