@@ -1,0 +1,289 @@
+diff -pruN a/chromium-37.0.2062.20/chrome/browser/extensions/extension_service.cc b/chromium-37.0.2062.20/chrome/browser/extensions/extension_service.cc
+--- a/chromium-37.0.2062.20/chrome/browser/extensions/extension_service.cc	2014-07-15 23:19:20.000000000 +0200
++++ b/chromium-37.0.2062.20/chrome/browser/extensions/extension_service.cc	2014-07-21 11:29:03.864678045 +0200
+@@ -1064,13 +1064,6 @@ void ExtensionService::NotifyExtensionLo
+     ThemeSource* theme_source = new ThemeSource(profile_);
+     content::URLDataSource::Add(profile_, theme_source);
+   }
+-
+-  // Same for chrome://thumb/ resources.
+-  if (permissions_data->HasHostPermission(
+-          GURL(chrome::kChromeUIThumbnailURL))) {
+-    ThumbnailSource* thumbnail_source = new ThumbnailSource(profile_, false);
+-    content::URLDataSource::Add(profile_, thumbnail_source);
+-  }
+ }
+ 
+ void ExtensionService::NotifyExtensionUnloaded(
+diff -pruN a/chromium-37.0.2062.20/chrome/browser/history/top_sites_backend.cc b/chromium-37.0.2062.20/chrome/browser/history/top_sites_backend.cc
+--- a/chromium-37.0.2062.20/chrome/browser/history/top_sites_backend.cc	2014-07-15 23:19:21.000000000 +0200
++++ b/chromium-37.0.2062.20/chrome/browser/history/top_sites_backend.cc	2014-07-21 11:29:03.868011379 +0200
+@@ -17,64 +17,34 @@ using content::BrowserThread;
+ namespace history {
+ 
+ TopSitesBackend::TopSitesBackend()
+-    : db_(new TopSitesDatabase()) {
++    : db_(static_cast< history::TopSitesDatabase *> (NULL)) {
+ }
+ 
+ void TopSitesBackend::Init(const base::FilePath& path) {
+   db_path_ = path;
+-  BrowserThread::PostTask(
+-      BrowserThread::DB, FROM_HERE,
+-      base::Bind(&TopSitesBackend::InitDBOnDBThread, this, path));
+ }
+ 
+ void TopSitesBackend::Shutdown() {
+-  BrowserThread::PostTask(
+-      BrowserThread::DB, FROM_HERE,
+-      base::Bind(&TopSitesBackend::ShutdownDBOnDBThread, this));
+ }
+ 
+ void TopSitesBackend::GetMostVisitedThumbnails(
+     const GetMostVisitedThumbnailsCallback& callback,
+     base::CancelableTaskTracker* tracker) {
+-  scoped_refptr<MostVisitedThumbnails> thumbnails = new MostVisitedThumbnails();
+-
+-  tracker->PostTaskAndReply(
+-      BrowserThread::GetMessageLoopProxyForThread(BrowserThread::DB).get(),
+-      FROM_HERE,
+-      base::Bind(&TopSitesBackend::GetMostVisitedThumbnailsOnDBThread,
+-                 this,
+-                 thumbnails),
+-      base::Bind(callback, thumbnails));
+ }
+ 
+ void TopSitesBackend::UpdateTopSites(const TopSitesDelta& delta) {
+-  BrowserThread::PostTask(
+-      BrowserThread::DB, FROM_HERE,
+-      base::Bind(&TopSitesBackend::UpdateTopSitesOnDBThread, this, delta));
+ }
+ 
+ void TopSitesBackend::SetPageThumbnail(const MostVisitedURL& url,
+                                        int url_rank,
+                                        const Images& thumbnail) {
+-  BrowserThread::PostTask(
+-      BrowserThread::DB, FROM_HERE,
+-      base::Bind(&TopSitesBackend::SetPageThumbnailOnDBThread, this, url,
+-                 url_rank, thumbnail));
+ }
+ 
+ void TopSitesBackend::ResetDatabase() {
+-  BrowserThread::PostTask(
+-      BrowserThread::DB, FROM_HERE,
+-      base::Bind(&TopSitesBackend::ResetDatabaseOnDBThread, this, db_path_));
+ }
+ 
+ void TopSitesBackend::DoEmptyRequest(const base::Closure& reply,
+                                      base::CancelableTaskTracker* tracker) {
+-  tracker->PostTaskAndReply(
+-      BrowserThread::GetMessageLoopProxyForThread(BrowserThread::DB).get(),
+-      FROM_HERE,
+-      base::Bind(&base::DoNothing),
+-      reply);
+ }
+ 
+ TopSitesBackend::~TopSitesBackend() {
+diff -pruN a/chromium-37.0.2062.20/chrome/browser/profiles/profile_impl.cc b/chromium-37.0.2062.20/chrome/browser/profiles/profile_impl.cc
+--- a/chromium-37.0.2062.20/chrome/browser/profiles/profile_impl.cc	2014-07-15 23:19:18.000000000 +0200
++++ b/chromium-37.0.2062.20/chrome/browser/profiles/profile_impl.cc	2014-07-21 11:29:03.868011379 +0200
+@@ -1042,15 +1042,11 @@ Time ProfileImpl::GetStartTime() const {
+ }
+ 
+ history::TopSites* ProfileImpl::GetTopSites() {
+-  if (!top_sites_.get()) {
+-    top_sites_ = history::TopSites::Create(
+-        this, GetPath().Append(chrome::kTopSitesFilename));
+-  }
+-  return top_sites_.get();
++  return NULL;
+ }
+ 
+ history::TopSites* ProfileImpl::GetTopSitesWithoutCreating() {
+-  return top_sites_.get();
++  return NULL;
+ }
+ 
+ void ProfileImpl::OnDefaultZoomLevelChanged() {
+diff -pruN a/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.html b/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.html
+--- a/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.html	2014-07-15 23:19:28.000000000 +0200
++++ b/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.html	2014-07-21 11:29:18.208011519 +0200
+@@ -12,19 +12,6 @@
+ </head>
+ <body>
+   <div id="ntp-contents" class="{{CLASS}}">
+-    <div id="most-visited">
+-      <div id="mv-tiles"></div>
+-      <!-- Notification shown when a tile is blacklisted. -->
+-      <div id="mv-notice" class="mv-notice-hide">
+-        <span id="mv-msg"></span>
+-        <!-- Links in the notification. -->
+-        <span id="mv-notice-links">
+-          <span id="mv-undo" tabIndex="1"></span>
+-          <span id="mv-restore" tabIndex="1"></span>
+-          <button id="mv-notice-x" tabIndex="1" class="mv-x"></button>
+-        </span>
+-      </div>
+-    </div>
+     <div id="attribution"><div id="attribution-text"></div></div>
+   </div>
+ </body>
+diff -pruN a/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.js b/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.js
+--- a/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.js	2014-07-15 23:19:28.000000000 +0200
++++ b/chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.js	2014-07-21 11:29:18.208011519 +0200
+@@ -221,19 +221,19 @@ var TILE_MARGIN_START = 20;
+ 
+ 
+ /** @type {number} @const */
+-var MAX_NUM_TILES_TO_SHOW = 8;
++var MAX_NUM_TILES_TO_SHOW = 0;
+ 
+ 
+ /** @type {number} @const */
+-var MIN_NUM_COLUMNS = 2;
++var MIN_NUM_COLUMNS = 0;
+ 
+ 
+ /** @type {number} @const */
+-var MAX_NUM_COLUMNS = 4;
++var MAX_NUM_COLUMNS = 0;
+ 
+ 
+ /** @type {number} @const */
+-var NUM_ROWS = 2;
++var NUM_ROWS = 0;
+ 
+ 
+ /**
+@@ -919,7 +918,6 @@ function getEmbeddedSearchApiHandle() {
+  * Google-provided page.
+  */
+ function init() {
+-  tilesContainer = $(IDS.TILES);
+   notification = $(IDS.NOTIFICATION);
+   attribution = $(IDS.ATTRIBUTION);
+   ntpContents = $(IDS.NTP_CONTENTS);
+@@ -973,7 +964,6 @@ function init() {
+ 
+   ntpApiHandle = topLevelHandle.newTabPage;
+   ntpApiHandle.onthemechange = onThemeChange;
+-  ntpApiHandle.onmostvisitedchange = onMostVisitedChange;
+ 
+   ntpApiHandle.oninputstart = onInputStart;
+   ntpApiHandle.oninputcancel = restoreNtp;
+@@ -982,7 +972,6 @@ function init() {
+     onInputStart();
+ 
+   renderTheme();
+-  onMostVisitedChange();
+ 
+   searchboxApiHandle = topLevelHandle.searchBox;
+ 
+diff -pruN a/chromium-37.0.2062.20/chrome/browser/search/instant_service.cc b/chromium-37.0.2062.20/chrome/browser/search/instant_service.cc
+--- a/chromium-37.0.2062.20/chrome/browser/search/instant_service.cc	2014-07-15 23:19:17.000000000 +0200
++++ b/chromium-37.0.2062.20/chrome/browser/search/instant_service.cc	2014-07-21 11:29:03.868011379 +0200
+@@ -117,18 +117,10 @@ InstantService::InstantService(Profile*
+ 
+   // TODO(aurimas) remove this #if once instant_service.cc is no longer compiled
+   // on Android.
+-#if !defined(OS_ANDROID)
+-  content::URLDataSource::Add(profile_, new ThumbnailSource(profile_, false));
+-  content::URLDataSource::Add(profile_, new ThumbnailSource(profile_, true));
+-  content::URLDataSource::Add(profile_, new ThumbnailListSource(profile_));
+-#endif  // !defined(OS_ANDROID)
+ 
+   content::URLDataSource::Add(
+       profile_, new FaviconSource(profile_, FaviconSource::FAVICON));
+   content::URLDataSource::Add(profile_, new LocalNtpSource(profile_));
+-  content::URLDataSource::Add(profile_, new MostVisitedIframeSource());
+-  content::URLDataSource::Add(
+-      profile_, new suggestions::SuggestionsSource(profile_));
+ }
+ 
+ InstantService::~InstantService() {
+diff -pruN a/chromium-37.0.2062.20/chrome/browser/search/search.cc b/chromium-37.0.2062.20/chrome/browser/search/search.cc
+--- a/chromium-37.0.2062.20/chrome/browser/search/search.cc	2014-07-15 23:19:29.000000000 +0200
++++ b/chromium-37.0.2062.20/chrome/browser/search/search.cc	2014-07-21 11:29:03.868011379 +0200
+@@ -298,13 +298,7 @@ bool IsURLAllowedForSupervisedUser(const
+ NewTabURLState IsValidNewTabURL(Profile* profile, const GURL& new_tab_url) {
+   if (profile->IsOffTheRecord())
+     return NEW_TAB_URL_INCOGNITO;
+-  if (!new_tab_url.is_valid())
+-    return NEW_TAB_URL_NOT_SET;
+-  if (!new_tab_url.SchemeIsSecure())
+-    return NEW_TAB_URL_INSECURE;
+-  if (!IsURLAllowedForSupervisedUser(new_tab_url, profile))
+-    return NEW_TAB_URL_BLOCKED;
+-  return NEW_TAB_URL_VALID;
++  return NEW_TAB_URL_VALID;
+ }
+ 
+ // Used to look up the URL to use for the New Tab page. Also tracks how we
+diff -pruN a/chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_policy_impl.cc b/chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
+--- a/chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2014-07-15 23:19:28.000000000 +0200
++++ b/chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2014-07-21 11:29:03.868011379 +0200
+@@ -23,7 +23,7 @@ SearchIPCRouterPolicyImpl::SearchIPCRout
+ SearchIPCRouterPolicyImpl::~SearchIPCRouterPolicyImpl() {}
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldProcessSetVoiceSearchSupport() {
+-  return true;
++  return false;
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldProcessFocusOmnibox(bool is_active_tab) {
+@@ -35,15 +35,15 @@ bool SearchIPCRouterPolicyImpl::ShouldPr
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldProcessDeleteMostVisitedItem() {
+-  return !is_incognito_ && chrome::IsInstantNTP(web_contents_);
++  return false;
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldProcessUndoMostVisitedDeletion() {
+-  return !is_incognito_ && chrome::IsInstantNTP(web_contents_);
++  return false;
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldProcessUndoAllMostVisitedDeletions() {
+-  return !is_incognito_ && chrome::IsInstantNTP(web_contents_);
++  return false;
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldProcessLogEvent() {
+@@ -85,7 +85,7 @@ bool SearchIPCRouterPolicyImpl::ShouldSe
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldSendMostVisitedItems() {
+-  return !is_incognito_ && chrome::IsInstantNTP(web_contents_);
++  return false;
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldSendThemeBackgroundInfo() {
+@@ -93,7 +93,7 @@ bool SearchIPCRouterPolicyImpl::ShouldSe
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldSendToggleVoiceSearch() {
+-  return true;
++  return false;
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldSubmitQuery() {
+diff -pruN a/chromium-37.0.2062.20/chrome/browser/ui/webui/ntp/new_tab_ui.cc b/chromium-37.0.2062.20/chrome/browser/ui/webui/ntp/new_tab_ui.cc
+--- a/chromium-37.0.2062.20/chrome/browser/ui/webui/ntp/new_tab_ui.cc	2014-07-15 23:19:29.000000000 +0200
++++ b/chromium-37.0.2062.20/chrome/browser/ui/webui/ntp/new_tab_ui.cc	2014-07-21 11:29:03.868011379 +0200
+@@ -94,7 +94,6 @@ NewTabUI::NewTabUI(content::WebUI* web_u
+   if (!GetProfile()->IsOffTheRecord()) {
+     web_ui->AddMessageHandler(new browser_sync::ForeignSessionHandler());
+     web_ui->AddMessageHandler(new MetricsHandler());
+-    web_ui->AddMessageHandler(new MostVisitedHandler());
+     web_ui->AddMessageHandler(new RecentlyClosedTabsHandler());
+     web_ui->AddMessageHandler(new FaviconWebUIHandler());
+     web_ui->AddMessageHandler(new NewTabPageHandler());
+@@ -225,7 +224,6 @@ void NewTabUI::RegisterProfilePrefs(
+   NewTabPageHandler::RegisterProfilePrefs(registry);
+   if (NewTabUI::IsDiscoveryInNTPEnabled())
+     SuggestionsHandler::RegisterProfilePrefs(registry);
+-  MostVisitedHandler::RegisterProfilePrefs(registry);
+   browser_sync::ForeignSessionHandler::RegisterProfilePrefs(registry);
+ }
+ 
