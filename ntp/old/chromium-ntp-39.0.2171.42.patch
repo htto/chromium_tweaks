@@ -182,17 +182,19 @@ diff -pruN chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.js
 diff -pruN chromium-37.0.2062.20/chrome/browser/search/instant_service.cc chromium-37.0.2062.20/chrome/browser/search/instant_service.cc
 --- chromium-37.0.2062.20/chrome/browser/search/instant_service.cc	2014-07-15 23:19:17.000000000 +0200
 +++ chromium-37.0.2062.20/chrome/browser/search/instant_service.cc	2014-07-21 11:29:03.868011379 +0200
-@@ -117,16 +117,10 @@ InstantService::InstantService(Profile*
+@@ -117,18 +117,10 @@ InstantService::InstantService(Profile*
+ 
+   // TODO(aurimas) remove this #if once instant_service.cc is no longer compiled
    // on Android.
- #if !defined(OS_ANDROID)
-   content::URLDataSource::Add(profile_, new LocalNtpSource(profile_));
+-#if !defined(OS_ANDROID)
 -  content::URLDataSource::Add(profile_, new ThumbnailSource(profile_, false));
 -  content::URLDataSource::Add(profile_, new ThumbnailSource(profile_, true));
 -  content::URLDataSource::Add(profile_, new ThumbnailListSource(profile_));
- #endif  // !defined(OS_ANDROID)
+-#endif  // !defined(OS_ANDROID)
  
    content::URLDataSource::Add(
        profile_, new FaviconSource(profile_, FaviconSource::FAVICON));
+   content::URLDataSource::Add(profile_, new LocalNtpSource(profile_));
 -  content::URLDataSource::Add(profile_, new MostVisitedIframeSource());
 -  content::URLDataSource::Add(
 -      profile_, new suggestions::SuggestionsSource(profile_));
