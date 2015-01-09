@@ -171,6 +171,14 @@ diff -pruN chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.js
  
    ntpApiHandle.oninputstart = onInputStart;
    ntpApiHandle.oninputcancel = restoreNtp;
+@@ -982,7 +972,6 @@ function init() {
+     onInputStart();
+ 
+   renderTheme();
+-  onMostVisitedChange();
+ 
+   searchboxApiHandle = topLevelHandle.searchBox;
+ 
 diff -pruN chromium-37.0.2062.20/chrome/browser/search/instant_service.cc chromium-37.0.2062.20/chrome/browser/search/instant_service.cc
 --- chromium-37.0.2062.20/chrome/browser/search/instant_service.cc	2014-07-15 23:19:17.000000000 +0200
 +++ chromium-37.0.2062.20/chrome/browser/search/instant_service.cc	2014-07-21 11:29:03.868011379 +0200
