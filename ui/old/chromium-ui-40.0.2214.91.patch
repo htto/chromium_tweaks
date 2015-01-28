@@ -9,6 +9,20 @@
  
  #if defined(OS_CHROMEOS) || defined(OS_MACOSX)
  const bool kBrowserAliveWithNoWindows = true;
+--- chromium-37.0.2062.94/chrome/browser/defaults.h.orig	2014-08-20 21:02:13.000000000 +0200
++++ chromium-37.0.2062.94/chrome/browser/defaults.h	2014-08-27 18:12:50.470269687 +0200
+@@ -28,9 +28,9 @@ extern const int kOmniboxFontPixelSize;
+ // all translation units that do this.
+ #if defined(TOOLKIT_VIEWS)
+ // Windows and Chrome OS have bigger shadows in the tab art.
+-const int kMiniTabWidth = 64;
++const int kMiniTabWidth = 60;
+ #else
+-const int kMiniTabWidth = 56;
++const int kMiniTabWidth = 52;
+ #endif
+ 
+ // Can the browser be alive without any browser windows?
 --- chromium-37.0.2062.94/chrome/browser/ui/views/frame/opaque_browser_frame_view.cc.orig	2014-08-20 21:02:04.000000000 +0200
 +++ chromium-37.0.2062.94/chrome/browser/ui/views/frame/opaque_browser_frame_view.cc	2014-08-27 18:12:50.470269687 +0200
 @@ -76,7 +76,7 @@ const int kResizeAreaCornerSize = 16;
@@ -44,16 +58,12 @@
  const int kExtraPaddingBetweenButtonAndTop = 1;
 --- chromium-37.0.2062.94/chrome/browser/ui/views/tabs/tab.cc.orig	2014-08-27 18:12:50.470269687 +0200
 +++ chromium-37.0.2062.94/chrome/browser/ui/views/tabs/tab.cc	2014-08-27 18:13:41.923603526 +0200
-@@ -68,10 +68,10 @@ static const int kTouchWidth = 120;
+@@ -68,7 +68,7 @@ static const int kTouchWidth = 120;
  static const int kToolbarOverlap = 1;
  static const int kFaviconTitleSpacing = 4;
  static const int kViewSpacing = 3;
 -static const int kStandardTitleWidth = 175;
 +static const int kStandardTitleWidth = 125;
- 
- // Width of mini-tabs.
--const int kMiniTabWidth = 64;
-+const int kMiniTabWidth = 56;
  
  // When a non-mini-tab becomes a mini-tab the width of the tab animates. If
  // the width of a mini-tab is >= kMiniTabRendererAsNormalTabWidth then the tab

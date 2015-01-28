@@ -111,7 +111,7 @@ diff -pruN chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.ht
 @@ -12,19 +12,6 @@
  </head>
  <body>
-   <div id="ntp-contents" class="des-mat">
+   <div id="ntp-contents" class="{{CLASS}}">
 -    <div id="most-visited">
 -      <div id="mv-tiles"></div>
 -      <!-- Notification shown when a tile is blacklisted. -->
