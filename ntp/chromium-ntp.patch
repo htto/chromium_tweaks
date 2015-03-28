@@ -1,7 +1,7 @@
-diff -pruN chromium-37.0.2062.20/chrome/browser/extensions/extension_service.cc chromium-37.0.2062.20/chrome/browser/extensions/extension_service.cc
---- chromium-37.0.2062.20/chrome/browser/extensions/extension_service.cc	2014-07-15 23:19:20.000000000 +0200
-+++ chromium-37.0.2062.20/chrome/browser/extensions/extension_service.cc	2014-07-21 11:29:03.864678045 +0200
-@@ -1064,13 +1064,6 @@ void ExtensionService::NotifyExtensionLo
+diff -pruNd chromium-42.0.2311.50.orig/chrome/browser/extensions/extension_service.cc chromium-42.0.2311.50/chrome/browser/extensions/extension_service.cc
+--- chromium-42.0.2311.50.orig/chrome/browser/extensions/extension_service.cc	2015-03-19 03:53:16.000000000 +0100
++++ chromium-42.0.2311.50/chrome/browser/extensions/extension_service.cc	2015-03-21 00:34:16.569025760 +0100
+@@ -1085,13 +1085,6 @@ void ExtensionService::NotifyExtensionLo
      ThemeSource* theme_source = new ThemeSource(profile_);
      content::URLDataSource::Add(profile_, theme_source);
    }
@@ -15,99 +15,9 @@ diff -pruN chromium-37.0.2062.20/chrome/browser/extensions/extension_service.cc 
  }
  
  void ExtensionService::NotifyExtensionUnloaded(
-diff -pruN chromium-37.0.2062.20/chrome/browser/history/top_sites_backend.cc chromium-37.0.2062.20/chrome/browser/history/top_sites_backend.cc
---- chromium-37.0.2062.20/chrome/browser/history/top_sites_backend.cc	2014-07-15 23:19:21.000000000 +0200
-+++ chromium-37.0.2062.20/chrome/browser/history/top_sites_backend.cc	2014-07-21 11:29:03.868011379 +0200
-@@ -17,64 +17,34 @@ using content::BrowserThread;
- namespace history {
- 
- TopSitesBackend::TopSitesBackend()
--    : db_(new TopSitesDatabase()) {
-+    : db_(static_cast< history::TopSitesDatabase *> (NULL)) {
- }
- 
- void TopSitesBackend::Init(const base::FilePath& path) {
-   db_path_ = path;
--  BrowserThread::PostTask(
--      BrowserThread::DB, FROM_HERE,
--      base::Bind(&TopSitesBackend::InitDBOnDBThread, this, path));
- }
- 
- void TopSitesBackend::Shutdown() {
--  BrowserThread::PostTask(
--      BrowserThread::DB, FROM_HERE,
--      base::Bind(&TopSitesBackend::ShutdownDBOnDBThread, this));
- }
- 
- void TopSitesBackend::GetMostVisitedThumbnails(
-     const GetMostVisitedThumbnailsCallback& callback,
-     base::CancelableTaskTracker* tracker) {
--  scoped_refptr<MostVisitedThumbnails> thumbnails = new MostVisitedThumbnails();
--
--  tracker->PostTaskAndReply(
--      BrowserThread::GetMessageLoopProxyForThread(BrowserThread::DB).get(),
--      FROM_HERE,
--      base::Bind(&TopSitesBackend::GetMostVisitedThumbnailsOnDBThread,
--                 this,
--                 thumbnails),
--      base::Bind(callback, thumbnails));
- }
- 
- void TopSitesBackend::UpdateTopSites(const TopSitesDelta& delta) {
--  BrowserThread::PostTask(
--      BrowserThread::DB, FROM_HERE,
--      base::Bind(&TopSitesBackend::UpdateTopSitesOnDBThread, this, delta));
- }
- 
- void TopSitesBackend::SetPageThumbnail(const MostVisitedURL& url,
-                                        int url_rank,
-                                        const Images& thumbnail) {
--  BrowserThread::PostTask(
--      BrowserThread::DB, FROM_HERE,
--      base::Bind(&TopSitesBackend::SetPageThumbnailOnDBThread, this, url,
--                 url_rank, thumbnail));
- }
- 
- void TopSitesBackend::ResetDatabase() {
--  BrowserThread::PostTask(
--      BrowserThread::DB, FROM_HERE,
--      base::Bind(&TopSitesBackend::ResetDatabaseOnDBThread, this, db_path_));
- }
- 
- void TopSitesBackend::DoEmptyRequest(const base::Closure& reply,
-                                      base::CancelableTaskTracker* tracker) {
--  tracker->PostTaskAndReply(
--      BrowserThread::GetMessageLoopProxyForThread(BrowserThread::DB).get(),
--      FROM_HERE,
--      base::Bind(&base::DoNothing),
--      reply);
- }
- 
- TopSitesBackend::~TopSitesBackend() {
-diff -pruN chromium-37.0.2062.20/chrome/browser/profiles/profile_impl.cc chromium-37.0.2062.20/chrome/browser/profiles/profile_impl.cc
---- chromium-37.0.2062.20/chrome/browser/profiles/profile_impl.cc	2014-07-15 23:19:18.000000000 +0200
-+++ chromium-37.0.2062.20/chrome/browser/profiles/profile_impl.cc	2014-07-21 11:29:03.868011379 +0200
-@@ -1042,15 +1042,11 @@ Time ProfileImpl::GetStartTime() const {
- }
- 
- history::TopSites* ProfileImpl::GetTopSites() {
--  if (!top_sites_.get()) {
--    top_sites_ = history::TopSites::Create(
--        this, GetPath().Append(chrome::kTopSitesFilename));
--  }
--  return top_sites_.get();
-+  return NULL;
- }
- 
- history::TopSites* ProfileImpl::GetTopSitesWithoutCreating() {
--  return top_sites_.get();
-+  return NULL;
- }
- 
- void ProfileImpl::OnDefaultZoomLevelChanged() {
-diff -pruN chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.html chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.html
---- chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.html	2014-07-15 23:19:28.000000000 +0200
-+++ chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.html	2014-07-21 11:29:18.208011519 +0200
+diff -pruNd chromium-42.0.2311.50.orig/chrome/browser/resources/local_ntp/local_ntp.html chromium-42.0.2311.50/chrome/browser/resources/local_ntp/local_ntp.html
+--- chromium-42.0.2311.50.orig/chrome/browser/resources/local_ntp/local_ntp.html	2015-03-19 03:40:38.000000000 +0100
++++ chromium-42.0.2311.50/chrome/browser/resources/local_ntp/local_ntp.html	2015-03-21 00:34:16.571025760 +0100
 @@ -12,19 +12,6 @@
  </head>
  <body>
@@ -128,10 +38,10 @@ diff -pruN chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.ht
      <div id="attribution"><div id="attribution-text"></div></div>
    </div>
  </body>
-diff -pruN chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.js chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.js
---- chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.js	2014-07-15 23:19:28.000000000 +0200
-+++ chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.js	2014-07-21 11:29:18.208011519 +0200
-@@ -221,19 +221,19 @@ var TILE_MARGIN_START = 20;
+diff -pruNd chromium-42.0.2311.50.orig/chrome/browser/resources/local_ntp/local_ntp.js chromium-42.0.2311.50/chrome/browser/resources/local_ntp/local_ntp.js
+--- chromium-42.0.2311.50.orig/chrome/browser/resources/local_ntp/local_ntp.js	2015-03-19 03:40:38.000000000 +0100
++++ chromium-42.0.2311.50/chrome/browser/resources/local_ntp/local_ntp.js	2015-03-21 00:34:16.573025760 +0100
+@@ -220,19 +220,19 @@ var fakeboxInputBehavior = NTP_DISPOSE_S
  
  
  /** @type {number} @const */
@@ -155,7 +65,7 @@ diff -pruN chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.js
  
  
  /**
-@@ -919,7 +918,6 @@ function getEmbeddedSearchApiHandle() {
+@@ -1074,7 +1074,6 @@ function handlePostMessage(event) {
   * Google-provided page.
   */
  function init() {
@@ -163,7 +73,7 @@ diff -pruN chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.js
    notification = $(IDS.NOTIFICATION);
    attribution = $(IDS.ATTRIBUTION);
    ntpContents = $(IDS.NTP_CONTENTS);
-@@ -973,7 +964,6 @@ function init() {
+@@ -1132,7 +1131,6 @@ function init() {
  
    ntpApiHandle = topLevelHandle.newTabPage;
    ntpApiHandle.onthemechange = onThemeChange;
@@ -171,10 +81,10 @@ diff -pruN chromium-37.0.2062.20/chrome/browser/resources/local_ntp/local_ntp.js
  
    ntpApiHandle.oninputstart = onInputStart;
    ntpApiHandle.oninputcancel = restoreNtp;
-diff -pruN chromium-37.0.2062.20/chrome/browser/search/instant_service.cc chromium-37.0.2062.20/chrome/browser/search/instant_service.cc
---- chromium-37.0.2062.20/chrome/browser/search/instant_service.cc	2014-07-15 23:19:17.000000000 +0200
-+++ chromium-37.0.2062.20/chrome/browser/search/instant_service.cc	2014-07-21 11:29:03.868011379 +0200
-@@ -117,16 +117,10 @@ InstantService::InstantService(Profile*
+diff -pruNd chromium-42.0.2311.50.orig/chrome/browser/search/instant_service.cc chromium-42.0.2311.50/chrome/browser/search/instant_service.cc
+--- chromium-42.0.2311.50.orig/chrome/browser/search/instant_service.cc	2015-03-19 03:53:16.000000000 +0100
++++ chromium-42.0.2311.50/chrome/browser/search/instant_service.cc	2015-03-21 00:34:16.574025760 +0100
+@@ -119,16 +119,10 @@ InstantService::InstantService(Profile*
    // on Android.
  #if !defined(OS_ANDROID)
    content::URLDataSource::Add(profile_, new LocalNtpSource(profile_));
@@ -191,10 +101,10 @@ diff -pruN chromium-37.0.2062.20/chrome/browser/search/instant_service.cc chromi
  }
  
  InstantService::~InstantService() {
-diff -pruN chromium-37.0.2062.20/chrome/browser/search/search.cc chromium-37.0.2062.20/chrome/browser/search/search.cc
---- chromium-37.0.2062.20/chrome/browser/search/search.cc	2014-07-15 23:19:29.000000000 +0200
-+++ chromium-37.0.2062.20/chrome/browser/search/search.cc	2014-07-21 11:29:03.868011379 +0200
-@@ -298,6 +298,6 @@ bool IsURLAllowedForSupervisedUser(const
+diff -pruNd chromium-42.0.2311.50.orig/chrome/browser/search/search.cc chromium-42.0.2311.50/chrome/browser/search/search.cc
+--- chromium-42.0.2311.50.orig/chrome/browser/search/search.cc	2015-03-19 03:40:38.000000000 +0100
++++ chromium-42.0.2311.50/chrome/browser/search/search.cc	2015-03-21 00:34:16.574025760 +0100
+@@ -268,7 +268,7 @@ NewTabURLState IsValidNewTabURL(Profile*
      return NEW_TAB_URL_INSECURE;
    if (!IsURLAllowedForSupervisedUser(new_tab_url, profile))
      return NEW_TAB_URL_BLOCKED;
@@ -203,9 +113,9 @@ diff -pruN chromium-37.0.2062.20/chrome/browser/search/search.cc chromium-37.0.2
  }
  
  // Used to look up the URL to use for the New Tab page. Also tracks how we
-diff -pruN chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_policy_impl.cc chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
---- chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2014-07-15 23:19:28.000000000 +0200
-+++ chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2014-07-21 11:29:03.868011379 +0200
+diff -pruNd chromium-42.0.2311.50.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc chromium-42.0.2311.50/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
+--- chromium-42.0.2311.50.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2015-03-19 03:40:38.000000000 +0100
++++ chromium-42.0.2311.50/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2015-03-21 00:34:16.577025760 +0100
 @@ -23,7 +23,7 @@ SearchIPCRouterPolicyImpl::SearchIPCRout
  SearchIPCRouterPolicyImpl::~SearchIPCRouterPolicyImpl() {}
  
@@ -234,7 +144,7 @@ diff -pruN chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_poli
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldProcessLogEvent() {
-@@ -85,7 +85,7 @@ bool SearchIPCRouterPolicyImpl::ShouldSe
+@@ -89,7 +89,7 @@ bool SearchIPCRouterPolicyImpl::ShouldSe
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldSendMostVisitedItems() {
@@ -243,7 +153,7 @@ diff -pruN chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_poli
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldSendThemeBackgroundInfo() {
-@@ -93,7 +93,7 @@ bool SearchIPCRouterPolicyImpl::ShouldSe
+@@ -97,7 +97,7 @@ bool SearchIPCRouterPolicyImpl::ShouldSe
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldSendToggleVoiceSearch() {
@@ -252,18 +162,18 @@ diff -pruN chromium-37.0.2062.20/chrome/browser/ui/search/search_ipc_router_poli
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldSubmitQuery() {
-diff -pruN chromium-37.0.2062.20/chrome/browser/ui/webui/ntp/new_tab_ui.cc chromium-37.0.2062.20/chrome/browser/ui/webui/ntp/new_tab_ui.cc
---- chromium-37.0.2062.20/chrome/browser/ui/webui/ntp/new_tab_ui.cc	2014-07-15 23:19:29.000000000 +0200
-+++ chromium-37.0.2062.20/chrome/browser/ui/webui/ntp/new_tab_ui.cc	2014-07-21 11:29:03.868011379 +0200
-@@ -94,7 +94,6 @@ NewTabUI::NewTabUI(content::WebUI* web_u
-   if (!GetProfile()->IsOffTheRecord()) {
+diff -pruNd chromium-42.0.2311.50.orig/chrome/browser/ui/webui/ntp/new_tab_ui.cc chromium-42.0.2311.50/chrome/browser/ui/webui/ntp/new_tab_ui.cc
+--- chromium-42.0.2311.50.orig/chrome/browser/ui/webui/ntp/new_tab_ui.cc	2015-03-19 03:40:38.000000000 +0100
++++ chromium-42.0.2311.50/chrome/browser/ui/webui/ntp/new_tab_ui.cc	2015-03-21 00:34:16.578025760 +0100
+@@ -96,7 +96,6 @@ NewTabUI::NewTabUI(content::WebUI* web_u
+   if (!profile->IsOffTheRecord()) {
      web_ui->AddMessageHandler(new browser_sync::ForeignSessionHandler());
      web_ui->AddMessageHandler(new MetricsHandler());
 -    web_ui->AddMessageHandler(new MostVisitedHandler());
      web_ui->AddMessageHandler(new RecentlyClosedTabsHandler());
      web_ui->AddMessageHandler(new FaviconWebUIHandler());
      web_ui->AddMessageHandler(new NewTabPageHandler());
-@@ -225,7 +224,6 @@ void NewTabUI::RegisterProfilePrefs(
+@@ -228,7 +227,6 @@ void NewTabUI::RegisterProfilePrefs(
    NewTabPageHandler::RegisterProfilePrefs(registry);
    if (NewTabUI::IsDiscoveryInNTPEnabled())
      SuggestionsHandler::RegisterProfilePrefs(registry);
@@ -271,3 +181,64 @@ diff -pruN chromium-37.0.2062.20/chrome/browser/ui/webui/ntp/new_tab_ui.cc chrom
    browser_sync::ForeignSessionHandler::RegisterProfilePrefs(registry);
  }
  
+diff -pruNd chromium-42.0.2311.50.orig/components/history/core/browser/top_sites_backend.cc chromium-42.0.2311.50/components/history/core/browser/top_sites_backend.cc
+--- chromium-42.0.2311.50.orig/components/history/core/browser/top_sites_backend.cc	2015-03-19 03:40:41.000000000 +0100
++++ chromium-42.0.2311.50/components/history/core/browser/top_sites_backend.cc	2015-03-21 00:34:16.570025760 +0100
+@@ -18,56 +18,35 @@ namespace history {
+ 
+ TopSitesBackend::TopSitesBackend(
+     const scoped_refptr<base::SingleThreadTaskRunner>& db_task_runner)
+-    : db_(new TopSitesDatabase()), db_task_runner_(db_task_runner) {
++    : db_(static_cast< TopSitesDatabase *> (NULL)), db_task_runner_(db_task_runner) {
+   DCHECK(db_task_runner_);
+ }
+ 
+ void TopSitesBackend::Init(const base::FilePath& path) {
+   db_path_ = path;
+-  db_task_runner_->PostTask(
+-      FROM_HERE, base::Bind(&TopSitesBackend::InitDBOnDBThread, this, path));
+ }
+ 
+ void TopSitesBackend::Shutdown() {
+-  db_task_runner_->PostTask(
+-      FROM_HERE, base::Bind(&TopSitesBackend::ShutdownDBOnDBThread, this));
+ }
+ 
+ void TopSitesBackend::GetMostVisitedThumbnails(
+     const GetMostVisitedThumbnailsCallback& callback,
+     base::CancelableTaskTracker* tracker) {
+-  scoped_refptr<MostVisitedThumbnails> thumbnails = new MostVisitedThumbnails();
+-  tracker->PostTaskAndReply(
+-      db_task_runner_.get(), FROM_HERE,
+-      base::Bind(&TopSitesBackend::GetMostVisitedThumbnailsOnDBThread, this,
+-                 thumbnails),
+-      base::Bind(callback, thumbnails));
+ }
+ 
+ void TopSitesBackend::UpdateTopSites(const TopSitesDelta& delta) {
+-  db_task_runner_->PostTask(
+-      FROM_HERE,
+-      base::Bind(&TopSitesBackend::UpdateTopSitesOnDBThread, this, delta));
+ }
+ 
+ void TopSitesBackend::SetPageThumbnail(const MostVisitedURL& url,
+                                        int url_rank,
+                                        const Images& thumbnail) {
+-  db_task_runner_->PostTask(
+-      FROM_HERE, base::Bind(&TopSitesBackend::SetPageThumbnailOnDBThread, this,
+-                            url, url_rank, thumbnail));
+ }
+ 
+ void TopSitesBackend::ResetDatabase() {
+-  db_task_runner_->PostTask(
+-      FROM_HERE,
+-      base::Bind(&TopSitesBackend::ResetDatabaseOnDBThread, this, db_path_));
+ }
+ 
+ void TopSitesBackend::DoEmptyRequest(const base::Closure& reply,
+                                      base::CancelableTaskTracker* tracker) {
+-  tracker->PostTaskAndReply(db_task_runner_.get(), FROM_HERE,
+-                            base::Bind(&base::DoNothing), reply);
+ }
+ 
+ TopSitesBackend::~TopSitesBackend() {
