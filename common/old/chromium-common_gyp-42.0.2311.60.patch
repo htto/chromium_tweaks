@@ -18,3 +18,12 @@
  
        # Enable printing support and UI. This variable is used to configure
        # which parts of printing will be built. 0 disables printing completely,
+@@ -722,7 +722,7 @@
+         ['OS=="android" or OS=="ios"', {
+           'enable_captive_portal_detection%': 0,
+         }, {
+-          'enable_captive_portal_detection%': 1,
++          'enable_captive_portal_detection%': 0,
+         }],
+ 
+         # Enable Skia UI text drawing incrementally on different platforms.
