@@ -1,0 +1,33 @@
+diff -pruN chromium-43.0.2357.18/third_party/WebKit/Source/core.orig/dom/NodeFilter.idl chromium-43.0.2357.18/third_party/WebKit/Source/core/dom/NodeFilter.idl
+--- chromium-43.0.2357.18/third_party/WebKit/Source/core.orig/dom/NodeFilter.idl	2015-04-25 10:27:57.757095154 +0200
++++ chromium-43.0.2357.18/third_party/WebKit/Source/core/dom/NodeFilter.idl	2015-04-24 23:55:41.720042479 +0200
+@@ -32,7 +32,7 @@
+     const short FILTER_SKIP = 3;
+ 
+     // Constants for whatToShow
+-    const unsigned long SHOW_ALL = 0xFFFFFFFF;
++    const long SHOW_ALL = -0x1;
+     const unsigned long SHOW_ELEMENT = 0x1;
+     const unsigned long SHOW_ATTRIBUTE = 0x2; // historical
+     const unsigned long SHOW_TEXT = 0x4;
+diff -pruN chromium-43.0.2357.18/third_party/WebKit/Source/core.orig/html/canvas/WebGL2RenderingContextBase.idl chromium-43.0.2357.18/third_party/WebKit/Source/core/html/canvas/WebGL2RenderingContextBase.idl
+--- chromium-43.0.2357.18/third_party/WebKit/Source/core.orig/html/canvas/WebGL2RenderingContextBase.idl	2015-04-15 06:20:39.000000000 +0200
++++ chromium-43.0.2357.18/third_party/WebKit/Source/core/html/canvas/WebGL2RenderingContextBase.idl	2015-04-25 10:28:50.618090633 +0200
+@@ -259,7 +259,7 @@ typedef long long      GLint64;
+     const GLenum UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES          = 0x8A43;
+     const GLenum UNIFORM_BLOCK_REFERENCED_BY_VERTEX_SHADER     = 0x8A44;
+     const GLenum UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER   = 0x8A46;
+-    const GLenum INVALID_INDEX                                 = 0xFFFFFFFF;
++    const GLint INVALID_INDEX                                 = -0x1;
+     const GLenum MAX_VERTEX_OUTPUT_COMPONENTS                  = 0x9122;
+     const GLenum MAX_FRAGMENT_INPUT_COMPONENTS                 = 0x9125;
+     const GLenum MAX_SERVER_WAIT_TIMEOUT                       = 0x9111;
+@@ -308,7 +308,7 @@ typedef long long      GLint64;
+     const GLenum TEXTURE_IMMUTABLE_LEVELS                      = 0x82DF;
+ 
+     // FIXME: This currently differs from the WebGL2 spec.
+-    const GLuint TIMEOUT_IGNORED                               = 0xFFFFFFFF;
++    const GLint TIMEOUT_IGNORED                               = -0x1;
+ 
+     /* Buffer objects */
+     void copyBufferSubData(GLenum readTarget, GLenum writeTarget, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size);
