@@ -95,9 +95,9 @@ diff -pruN chromium-43.0.2357.18.orig/chrome/browser/search/instant_service.cc c
  
    favicon::FaviconService* favicon_service =
 @@ -143,9 +140,6 @@ InstantService::InstantService(Profile*
-       profile_, new FaviconSource(profile_, FaviconSource::FAVICON));
+       profile_, new FallbackIconSource(fallback_icon_service));
    content::URLDataSource::Add(
-       profile_, new LargeIconSource(fallback_icon_service, large_icon_service));
+       profile_, new FaviconSource(profile_, FaviconSource::FAVICON));
 -  content::URLDataSource::Add(profile_, new MostVisitedIframeSource());
 -  content::URLDataSource::Add(
 -      profile_, new suggestions::SuggestionsSource(profile_));
@@ -173,13 +173,13 @@ diff -pruN chromium-43.0.2357.18.orig/chrome/browser/ui/webui/ntp/new_tab_ui.cc 
      web_ui->AddMessageHandler(new browser_sync::ForeignSessionHandler());
      web_ui->AddMessageHandler(new MetricsHandler());
 -    web_ui->AddMessageHandler(new MostVisitedHandler());
+     web_ui->AddMessageHandler(new RecentlyClosedTabsHandler());
      web_ui->AddMessageHandler(new FaviconWebUIHandler());
      web_ui->AddMessageHandler(new NewTabPageHandler());
-     web_ui->AddMessageHandler(new CoreAppLauncherHandler());
 @@ -228,7 +227,6 @@ void NewTabUI::RegisterProfilePrefs(
-     user_prefs::PrefRegistrySyncable* registry) {
-   CoreAppLauncherHandler::RegisterProfilePrefs(registry);
    NewTabPageHandler::RegisterProfilePrefs(registry);
+   if (NewTabUI::IsDiscoveryInNTPEnabled())
+     SuggestionsHandler::RegisterProfilePrefs(registry);
 -  MostVisitedHandler::RegisterProfilePrefs(registry);
    browser_sync::ForeignSessionHandler::RegisterProfilePrefs(registry);
  }
@@ -187,7 +187,7 @@ diff -pruN chromium-43.0.2357.18.orig/chrome/browser/ui/webui/ntp/new_tab_ui.cc 
 diff -pruN chromium-43.0.2357.18.orig/components/history/core/browser/top_sites_backend.cc chromium-43.0.2357.18/components/history/core/browser/top_sites_backend.cc
 --- chromium-43.0.2357.18.orig/components/history/core/browser/top_sites_backend.cc	2015-04-15 05:55:06.000000000 +0200
 +++ chromium-43.0.2357.18/components/history/core/browser/top_sites_backend.cc	2015-04-23 09:46:06.809900139 +0200
-@@ -21,57 +21,35 @@ namespace history {
+@@ -21,56 +21,35 @@ namespace history {
  
  TopSitesBackend::TopSitesBackend(
      const scoped_refptr<base::SingleThreadTaskRunner>& db_task_runner)
@@ -218,12 +218,10 @@ diff -pruN chromium-43.0.2357.18.orig/components/history/core/browser/top_sites_
 -      base::Bind(callback, thumbnails));
  }
  
- void TopSitesBackend::UpdateTopSites(const TopSitesDelta& delta,
-                                      const RecordHistogram record_or_not) {
+ void TopSitesBackend::UpdateTopSites(const TopSitesDelta& delta) {
 -  db_task_runner_->PostTask(
 -      FROM_HERE,
--      base::Bind(&TopSitesBackend::UpdateTopSitesOnDBThread, this, delta,
--                 record_or_not));
+-      base::Bind(&TopSitesBackend::UpdateTopSitesOnDBThread, this, delta));
  }
  
  void TopSitesBackend::SetPageThumbnail(const MostVisitedURL& url,
