@@ -1,0 +1,32 @@
+diff -pruN chromium-45.0.2454.15.orig/ui/gfx/x/x11_types.cc chromium-45.0.2454.15/ui/gfx/x/x11_types.cc
+--- chromium-45.0.2454.15.orig/ui/gfx/x/x11_types.cc	2015-07-23 22:09:37.000000000 +0200
++++ chromium-45.0.2454.15/ui/gfx/x/x11_types.cc	2015-08-26 13:08:36.825200409 +0200
+@@ -43,18 +43,17 @@ void PutARGBImage(XDisplay* display,
+                width, height);
+ }
+ 
+-int BitsPerPixelForPixmapDepth(XDisplay* dpy, int depth) {
+-  int count;
+-  XScopedPtr<XPixmapFormatValues[]> formats(XListPixmapFormats(dpy, &count));
+-  if (!formats)
+-    return -1;
+-
+-  for (int i = 0; i < count; ++i) {
+-    if (formats[i].depth == depth)
+-      return formats[i].bits_per_pixel;
+-  }
++// called from content::SoftwareOutputDeviceX11::EndPaint on every frikkin frame
++// scoped pointer
++//  34.24    0.051020          85       600 XFree
++//  32.96    0.049109          81       600 XListPixmapFormats
++// vs libX11/ImUtil _XGetBitsPerPixel
++//  31.89    0.047513          79       600 _XGetBitsPerPixel
++// Roughly halves the runtime... untraced even more.
++extern "C" int _XGetBitsPerPixel(Display *dpy, int depth);
+ 
+-  return -1;
++int BitsPerPixelForPixmapDepth(XDisplay* dpy, int depth) {
++  return _XGetBitsPerPixel(dpy, depth);
+ }
+ 
+ void PutARGBImage(XDisplay* display,

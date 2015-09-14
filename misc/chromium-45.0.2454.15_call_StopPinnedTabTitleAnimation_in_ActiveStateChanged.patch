@@ -1,0 +1,14 @@
+diff -pruN chromium-45.0.2454.15.orig/chrome/browser/ui/views/tabs/tab.cc chromium-45.0.2454.15/chrome/browser/ui/views/tabs/tab.cc
+--- chromium-45.0.2454.15.orig/chrome/browser/ui/views/tabs/tab.cc	2015-07-23 22:09:22.000000000 +0200
++++ chromium-45.0.2454.15/chrome/browser/ui/views/tabs/tab.cc	2015-08-23 12:26:04.900022655 +0200
+@@ -479,6 +479,10 @@ bool Tab::IsActive() const {
+ 
+ void Tab::ActiveStateChanged() {
+   GetMediaIndicatorButton()->UpdateEnabledForMuteToggle();
++  // Needs to be done here, otherewise only no_longer_selected[i] will have
++  // StopPinnedTabTitleAnimation() called in tab_strip.cc
++  if (IsActive())
++  	StopPinnedTabTitleAnimation();
+ }
+ 
+ bool Tab::IsSelected() const {

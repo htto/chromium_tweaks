@@ -1,0 +1,49 @@
+diff -pruN chromium-45.0.2454.15.orig/gpu/command_buffer/common/mailbox.h chromium-45.0.2454.15/gpu/command_buffer/common/mailbox.h
+--- chromium-45.0.2454.15.orig/gpu/command_buffer/common/mailbox.h	2015-07-23 22:09:29.000000000 +0200
++++ chromium-45.0.2454.15/gpu/command_buffer/common/mailbox.h	2015-08-29 15:11:53.273701782 +0200
+@@ -5,6 +5,7 @@
+ #ifndef GPU_COMMAND_BUFFER_MAILBOX_H_
+ #define GPU_COMMAND_BUFFER_MAILBOX_H_
+ 
++#include <functional>
+ #include <stdint.h>
+ #include <string.h>
+ 
+@@ -48,5 +49,17 @@ struct GPU_EXPORT Mailbox {
+ 
+ }  // namespace gpu
+ 
++/* hash functor for Mailbox for unordered_map usage in mailbox_manager */
++namespace std {
++	template <>
++	struct hash< gpu::Mailbox > : public __hash_base< size_t, gpu::Mailbox >
++	{
++		size_t operator()(const gpu::Mailbox& m) const
++		{
++			return std::_Hash_impl::hash(&m, sizeof(m));
++		}
++	};
++};
++
+ #endif  // GPU_COMMAND_BUFFER_MAILBOX_H_
+ 
+diff -pruN chromium-45.0.2454.15.orig/gpu/command_buffer/service/mailbox_manager_impl.h chromium-45.0.2454.15/gpu/command_buffer/service/mailbox_manager_impl.h
+--- chromium-45.0.2454.15.orig/gpu/command_buffer/service/mailbox_manager_impl.h	2015-07-23 22:09:29.000000000 +0200
++++ chromium-45.0.2454.15/gpu/command_buffer/service/mailbox_manager_impl.h	2015-08-29 14:22:15.933644710 +0200
+@@ -6,6 +6,7 @@
+ #define GPU_COMMAND_BUFFER_SERVICE_MAILBOX_MANAGER_IMPL_H_
+ 
+ #include <map>
++#include <unordered_map>
+ #include <utility>
+ 
+ #include "base/memory/linked_ptr.h"
+@@ -47,7 +48,7 @@ class GPU_EXPORT MailboxManagerImpl : pu
+   // iterator in the MailboxToTextureMap to be able to manage changes to
+   // the TextureToMailboxMap efficiently.
+   typedef std::multimap<Texture*, Mailbox> TextureToMailboxMap;
+-  typedef std::map<Mailbox, TextureToMailboxMap::iterator>
++  typedef std::unordered_map<Mailbox, TextureToMailboxMap::iterator>
+       MailboxToTextureMap;
+ 
+   MailboxToTextureMap mailbox_to_textures_;
