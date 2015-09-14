@@ -1,7 +1,7 @@
-diff -pru chromium-46.0.2490.13.orig/chrome/browser/extensions/extension_service.cc chromium-46.0.2490.13/chrome/browser/extensions/extension_service.cc
---- chromium-46.0.2490.13.orig/chrome/browser/extensions/extension_service.cc	2015-09-02 22:10:15.000000000 +0200
-+++ chromium-46.0.2490.13/chrome/browser/extensions/extension_service.cc	2015-09-14 22:16:36.983289066 +0200
-@@ -1093,13 +1093,6 @@ void ExtensionService::NotifyExtensionLo
+diff -pruNd chromium-45.0.2454.15.orig/chrome/browser/extensions/extension_service.cc chromium-45.0.2454.15/chrome/browser/extensions/extension_service.cc
+--- chromium-45.0.2454.15.orig/chrome/browser/extensions/extension_service.cc	2015-07-23 22:09:21.000000000 +0200
++++ chromium-45.0.2454.15/chrome/browser/extensions/extension_service.cc	2015-07-29 23:45:12.240864172 +0200
+@@ -1111,13 +1111,6 @@ void ExtensionService::NotifyExtensionLo
      ThemeSource* theme_source = new ThemeSource(profile_);
      content::URLDataSource::Add(profile_, theme_source);
    }
@@ -14,10 +14,10 @@ diff -pru chromium-46.0.2490.13.orig/chrome/browser/extensions/extension_service
 -  }
  }
  
- void ExtensionService::OnExtensionRegisteredWithRequestContexts(
-diff -pru chromium-46.0.2490.13.orig/chrome/browser/resources/local_ntp/local_ntp.html chromium-46.0.2490.13/chrome/browser/resources/local_ntp/local_ntp.html
---- chromium-46.0.2490.13.orig/chrome/browser/resources/local_ntp/local_ntp.html	2015-08-22 21:01:52.000000000 +0200
-+++ chromium-46.0.2490.13/chrome/browser/resources/local_ntp/local_ntp.html	2015-09-14 22:16:36.983289066 +0200
+ void ExtensionService::NotifyExtensionUnloaded(
+diff -pruNd chromium-45.0.2454.15.orig/chrome/browser/resources/local_ntp/local_ntp.html chromium-45.0.2454.15/chrome/browser/resources/local_ntp/local_ntp.html
+--- chromium-45.0.2454.15.orig/chrome/browser/resources/local_ntp/local_ntp.html	2015-07-23 22:09:21.000000000 +0200
++++ chromium-45.0.2454.15/chrome/browser/resources/local_ntp/local_ntp.html	2015-07-29 23:45:12.240864172 +0200
 @@ -12,19 +12,6 @@
  </head>
  <body>
@@ -38,27 +38,34 @@ diff -pru chromium-46.0.2490.13.orig/chrome/browser/resources/local_ntp/local_nt
      <div id="attribution"><div id="attribution-text"></div></div>
    </div>
  </body>
-diff -pru chromium-46.0.2490.13.orig/chrome/browser/resources/local_ntp/local_ntp.js chromium-46.0.2490.13/chrome/browser/resources/local_ntp/local_ntp.js
---- chromium-46.0.2490.13.orig/chrome/browser/resources/local_ntp/local_ntp.js	2015-09-02 22:10:15.000000000 +0200
-+++ chromium-46.0.2490.13/chrome/browser/resources/local_ntp/local_ntp.js	2015-09-14 22:31:12.339943493 +0200
-@@ -761,6 +761,8 @@ function init() {
-     modifyNtpDesignForIcons();
-   document.querySelector('#ntp-contents').classList.add(NTP_DESIGN.mainClass);
+diff -pruNd chromium-45.0.2454.15.orig/chrome/browser/resources/local_ntp/local_ntp.js chromium-45.0.2454.15/chrome/browser/resources/local_ntp/local_ntp.js
+--- chromium-45.0.2454.15.orig/chrome/browser/resources/local_ntp/local_ntp.js	2015-07-23 22:09:21.000000000 +0200
++++ chromium-45.0.2454.15/chrome/browser/resources/local_ntp/local_ntp.js	2015-07-29 23:47:15.074201495 +0200
+@@ -245,19 +245,19 @@ var fakeboxInputBehavior = NTP_DISPOSE_S
  
-+  if (false)
-+  {
-   // Hide notifications after fade out, so we can't focus on links via keyboard.
-   notification.addEventListener('webkitTransitionEnd', hideNotification);
  
-@@ -786,6 +788,7 @@ function init() {
-   createAndAppendElement(
-       notificationCloseButton, 'div', CLASSES.BLACKLIST_BUTTON_INNER);
-   notificationCloseButton.addEventListener('click', hideNotification);
-+  }
+ /** @type {number} @const */
+-var MAX_NUM_TILES_TO_SHOW = 8;
++var MAX_NUM_TILES_TO_SHOW = 0;
  
-   window.addEventListener('resize', onResize);
-   updateContentWidth();
-@@ -794,7 +797,6 @@ function init() {
+ 
+ /** @type {number} @const */
+-var MIN_NUM_COLUMNS = 2;
++var MIN_NUM_COLUMNS = 0;
+ 
+ 
+ /** @type {number} @const */
+-var MAX_NUM_COLUMNS = 4;
++var MAX_NUM_COLUMNS = 0;
+ 
+ 
+ /** @type {number} @const */
+-var NUM_ROWS = 2;
++var NUM_ROWS = 0;
+ 
+ 
+ /**
+@@ -792,7 +792,6 @@ function init() {
  
    ntpApiHandle = topLevelHandle.newTabPage;
    ntpApiHandle.onthemechange = onThemeChange;
@@ -66,52 +73,39 @@ diff -pru chromium-46.0.2490.13.orig/chrome/browser/resources/local_ntp/local_nt
  
    ntpApiHandle.oninputstart = onInputStart;
    ntpApiHandle.oninputcancel = restoreNtp;
-@@ -852,10 +854,13 @@ function init() {
+@@ -850,11 +849,6 @@ function init() {
      document.documentElement.classList.add(CLASSES.RTL);
    }
  
-+  if (false)
-+  {
-   var iframe = document.createElement('iframe');
-   // Change the order of tabbing the page to start with NTP tiles.
-   iframe.setAttribute('tabindex', '1');
-   iframe.id = 'mv-single';
-+  }
- 
+-  var iframe = document.createElement('iframe');
+-  // Change the order of tabbing the page to start with NTP tiles.
+-  iframe.setAttribute('tabindex', '1');
+-  iframe.id = 'mv-single';
+-
    var args = [];
  
-@@ -869,6 +874,8 @@ function init() {
+   if (searchboxApiHandle.rtl)
+@@ -866,16 +860,6 @@ function init() {
+ 
    args.push('removeTooltip=' +
        encodeURIComponent(configData.translatedStrings.removeThumbnailTooltip));
- 
-+  if (false)
-+  {
-   iframe.src = '//most-visited/single.html?' + args.join('&');
-   $(IDS.TILES).appendChild(iframe);
- 
-@@ -878,6 +885,7 @@ function init() {
-   };
- 
-   window.addEventListener('message', handlePostMessage);
-+  }
+-
+-  iframe.src = '//most-visited/single.html?' + args.join('&');
+-  $(IDS.TILES).appendChild(iframe);
+-
+-  iframe.onload = function() {
+-    reloadTiles();
+-    renderTheme();
+-  };
+-
+-  window.addEventListener('message', handlePostMessage);
  }
  
  
-diff -pru chromium-46.0.2490.13.orig/chrome/browser/search/instant_service.cc chromium-46.0.2490.13/chrome/browser/search/instant_service.cc
---- chromium-46.0.2490.13.orig/chrome/browser/search/instant_service.cc	2015-09-02 21:00:31.000000000 +0200
-+++ chromium-46.0.2490.13/chrome/browser/search/instant_service.cc	2015-09-14 22:22:11.119951060 +0200
-@@ -60,9 +60,7 @@ const char kLocalNTPSuggestionService[]
- const char kLocalNTPSuggestionServiceEnabled[] = "Enabled";
- 
- bool IsLocalNTPSuggestionServiceEnabled() {
--  return base::StartsWith(
--      base::FieldTrialList::FindFullName(kLocalNTPSuggestionService),
--      kLocalNTPSuggestionServiceEnabled, base::CompareCase::INSENSITIVE_ASCII);
-+    return false;
- }
- 
- }  // namespace
-@@ -131,9 +129,6 @@ InstantService::InstantService(Profile*
+diff -pruNd chromium-45.0.2454.15.orig/chrome/browser/search/instant_service.cc chromium-45.0.2454.15/chrome/browser/search/instant_service.cc
+--- chromium-45.0.2454.15.orig/chrome/browser/search/instant_service.cc	2015-07-23 22:09:21.000000000 +0200
++++ chromium-45.0.2454.15/chrome/browser/search/instant_service.cc	2015-07-29 23:45:12.244197505 +0200
+@@ -112,9 +112,6 @@ InstantService::InstantService(Profile*
    // on Android.
  #if !defined(OS_ANDROID)
    content::URLDataSource::Add(profile_, new LocalNtpSource(profile_));
@@ -121,20 +115,20 @@ diff -pru chromium-46.0.2490.13.orig/chrome/browser/search/instant_service.cc ch
  #endif  // !defined(OS_ANDROID)
  
    favicon::FallbackIconService* fallback_icon_service =
-@@ -146,9 +141,6 @@ InstantService::InstantService(Profile*
+@@ -127,9 +124,6 @@ InstantService::InstantService(Profile*
        profile_, new FaviconSource(profile_, FaviconSource::FAVICON));
    content::URLDataSource::Add(
        profile_, new LargeIconSource(fallback_icon_service, large_icon_service));
 -  content::URLDataSource::Add(profile_, new MostVisitedIframeSource());
 -  content::URLDataSource::Add(
 -      profile_, new suggestions::SuggestionsSource(profile_));
+ }
  
-   if (IsLocalNTPSuggestionServiceEnabled()) {
-     suggestions_service_ =
-diff -pru chromium-46.0.2490.13.orig/chrome/browser/search/search.cc chromium-46.0.2490.13/chrome/browser/search/search.cc
---- chromium-46.0.2490.13.orig/chrome/browser/search/search.cc	2015-09-02 21:00:31.000000000 +0200
-+++ chromium-46.0.2490.13/chrome/browser/search/search.cc	2015-09-14 22:16:36.983289066 +0200
-@@ -242,7 +242,7 @@ NewTabURLState IsValidNewTabURL(Profile*
+ InstantService::~InstantService() {
+diff -pruNd chromium-45.0.2454.15.orig/chrome/browser/search/search.cc chromium-45.0.2454.15/chrome/browser/search/search.cc
+--- chromium-45.0.2454.15.orig/chrome/browser/search/search.cc	2015-07-23 22:09:21.000000000 +0200
++++ chromium-45.0.2454.15/chrome/browser/search/search.cc	2015-07-29 23:45:12.244197505 +0200
+@@ -268,7 +268,7 @@ NewTabURLState IsValidNewTabURL(Profile*
      return NEW_TAB_URL_INSECURE;
    if (!IsURLAllowedForSupervisedUser(new_tab_url, profile))
      return NEW_TAB_URL_BLOCKED;
@@ -143,9 +137,9 @@ diff -pru chromium-46.0.2490.13.orig/chrome/browser/search/search.cc chromium-46
  }
  
  // Used to look up the URL to use for the New Tab page. Also tracks how we
-diff -pru chromium-46.0.2490.13.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc chromium-46.0.2490.13/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
---- chromium-46.0.2490.13.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2015-09-02 21:00:31.000000000 +0200
-+++ chromium-46.0.2490.13/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2015-09-14 22:16:36.983289066 +0200
+diff -pruNd chromium-45.0.2454.15.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc chromium-45.0.2454.15/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
+--- chromium-45.0.2454.15.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2015-07-23 22:09:22.000000000 +0200
++++ chromium-45.0.2454.15/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2015-07-29 23:45:12.244197505 +0200
 @@ -23,7 +23,7 @@ SearchIPCRouterPolicyImpl::SearchIPCRout
  SearchIPCRouterPolicyImpl::~SearchIPCRouterPolicyImpl() {}
  
@@ -159,17 +153,17 @@ diff -pru chromium-46.0.2490.13.orig/chrome/browser/ui/search/search_ipc_router_
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldProcessDeleteMostVisitedItem() {
--  return !is_incognito_ && search::IsInstantNTP(web_contents_);
+-  return !is_incognito_ && chrome::IsInstantNTP(web_contents_);
 +  return false;
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldProcessUndoMostVisitedDeletion() {
--  return !is_incognito_ && search::IsInstantNTP(web_contents_);
+-  return !is_incognito_ && chrome::IsInstantNTP(web_contents_);
 +  return false;
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldProcessUndoAllMostVisitedDeletions() {
--  return !is_incognito_ && search::IsInstantNTP(web_contents_);
+-  return !is_incognito_ && chrome::IsInstantNTP(web_contents_);
 +  return false;
  }
  
@@ -178,7 +172,7 @@ diff -pru chromium-46.0.2490.13.orig/chrome/browser/ui/search/search_ipc_router_
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldSendMostVisitedItems() {
--  return !is_incognito_ && search::IsInstantNTP(web_contents_);
+-  return !is_incognito_ && chrome::IsInstantNTP(web_contents_);
 +  return false;
  }
  
@@ -192,9 +186,9 @@ diff -pru chromium-46.0.2490.13.orig/chrome/browser/ui/search/search_ipc_router_
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldSubmitQuery() {
-diff -pru chromium-46.0.2490.13.orig/components/history/core/browser/top_sites_backend.cc chromium-46.0.2490.13/components/history/core/browser/top_sites_backend.cc
---- chromium-46.0.2490.13.orig/components/history/core/browser/top_sites_backend.cc	2015-08-22 21:01:54.000000000 +0200
-+++ chromium-46.0.2490.13/components/history/core/browser/top_sites_backend.cc	2015-09-14 22:16:36.983289066 +0200
+diff -pruNd chromium-45.0.2454.15.orig/components/history/core/browser/top_sites_backend.cc chromium-45.0.2454.15/components/history/core/browser/top_sites_backend.cc
+--- chromium-45.0.2454.15.orig/components/history/core/browser/top_sites_backend.cc	2015-07-23 22:09:26.000000000 +0200
++++ chromium-45.0.2454.15/components/history/core/browser/top_sites_backend.cc	2015-07-29 23:45:12.244197505 +0200
 @@ -21,58 +21,36 @@ namespace history {
  
  TopSitesBackend::TopSitesBackend(
