@@ -1,32 +1,15 @@
-diff -pruN chromium-47.0.2526.16.orig/chrome/browser/ui/views/layout_constants.cc chromium-47.0.2526.16/chrome/browser/ui/views/layout_constants.cc
---- chromium-47.0.2526.16.orig/chrome/browser/ui/views/layout_constants.cc	2015-07-23 22:09:20.000000000 +0200
-+++ chromium-47.0.2526.16/chrome/browser/ui/views/layout_constants.cc	2015-07-29 23:28:01.114164014 +0200
-@@ -6,11 +6,11 @@
-   const int kLocationBarHorizontalPadding[] = {3, 6, 6};
-   const int kLocationBarVerticalPadding[] = {2, 2, 2};
-   const int kOmniboxDropdownBorderInterior[] = {6, 0, 0};
--  const int kOmniboxFontPixelSize[] = {16, 14, 14};
-+  const int kOmniboxFontPixelSize[] = {12, 10, 10};
-   const int kTabCloseButtonTrailingPaddingOverlap[] = {2, 2, 2};
-   const int kTabFaviconTitleSpacing[] = {4, 4, 4};
--  const int kTabMaximumTitleWidth[] = {175, 175, 175};
--  const int kTabPinnedContentWidth[] = {25, 25, 25};
-+  const int kTabMaximumTitleWidth[] = {125, 125, 125};
-+  const int kTabPinnedContentWidth[] = {20, 20, 20};
- #if defined(OS_MACOSX)
-   const int kTabstripTabOverlap[] = {19, 19, 19};
- #else
-@@ -87,8 +87,8 @@ gfx::Insets GetLayoutInsets(LayoutInset
-   const int kOmniboxDropdownIconPadding[] = {2, 4, 8};
-   const int kOmniboxDropdownTextPadding[] = {3, 4, 8};
-   const int kTabBottomPadding[] = {2, 2, 2};
--  const int kTabLeftPadding[] = {20, 20, 20};
--  const int kTabRightPadding[] = {20, 20, 20};
-+  const int kTabLeftPadding[] = {18, 18, 18};
-+  const int kTabRightPadding[] = {18, 18, 18};
-   const int kTabTopPadding[] = {4, 4, 4};
-   const int kToolbarBottomPadding[] = {5, 5, 5};
-   const int kToolbarButtonPadding[] = {2, 6, 6};
+diff -pruN chromium-45.0.2454.15.orig/chrome/browser/defaults.cc chromium-45.0.2454.15/chrome/browser/defaults.cc
+--- chromium-45.0.2454.15.orig/chrome/browser/defaults.cc	2015-07-23 22:09:20.000000000 +0200
++++ chromium-45.0.2454.15/chrome/browser/defaults.cc	2015-07-29 23:28:01.114164014 +0200
+@@ -6,7 +6,7 @@
+ 
+ namespace browser_defaults {
+ 
+-const int kOmniboxFontPixelSize = 16;
++const int kOmniboxFontPixelSize = 12;
+ 
+ #if defined(OS_CHROMEOS) || defined(OS_MACOSX)
+ const bool kBrowserAliveWithNoWindows = true;
 diff -pruN chromium-45.0.2454.15.orig/chrome/browser/ui/views/frame/opaque_browser_frame_view.cc chromium-45.0.2454.15/chrome/browser/ui/views/frame/opaque_browser_frame_view.cc
 --- chromium-45.0.2454.15.orig/chrome/browser/ui/views/frame/opaque_browser_frame_view.cc	2015-07-23 22:09:22.000000000 +0200
 +++ chromium-45.0.2454.15/chrome/browser/ui/views/frame/opaque_browser_frame_view.cc	2015-07-29 23:26:14.620827222 +0200
@@ -63,6 +46,22 @@ diff -pruN chromium-45.0.2454.15.orig/chrome/browser/ui/views/panels/panel_frame
  
  // The extra padding between the button and the top edge.
  const int kExtraPaddingBetweenButtonAndTop = 1;
+diff -pruN chromium-45.0.2454.15.orig/chrome/browser/ui/views/tabs/tab.cc chromium-45.0.2454.15/chrome/browser/ui/views/tabs/tab.cc
+--- chromium-45.0.2454.15.orig/chrome/browser/ui/views/tabs/tab.cc	2015-07-23 22:09:22.000000000 +0200
++++ chromium-45.0.2454.15/chrome/browser/ui/views/tabs/tab.cc	2015-07-29 23:26:14.624160555 +0200
+@@ -76,10 +76,10 @@ static const int kTouchWidth = 120;
+ static const int kToolbarOverlap = 1;
+ static const int kFaviconTitleSpacing = 4;
+ static const int kViewSpacing = 3;
+-static const int kStandardTitleWidth = 175;
++static const int kStandardTitleWidth = 125;
+ 
+ // Width of pinned-tabs.
+-const int kPinnedTabWidth = 64;
++const int kPinnedTabWidth = 56;
+ 
+ // When a non-pinned tab becomes a pinned tab the width of the tab animates. If
+ // the width of a pinned tab is >= kPinnedTabRendererAsNormalTabWidth then the
 diff -pruN chromium-45.0.2454.15.orig/chrome/browser/ui/views/toolbar/wrench_menu.cc chromium-45.0.2454.15/chrome/browser/ui/views/toolbar/wrench_menu.cc
 --- chromium-45.0.2454.15.orig/chrome/browser/ui/views/toolbar/wrench_menu.cc	2015-07-23 22:09:22.000000000 +0200
 +++ chromium-45.0.2454.15/chrome/browser/ui/views/toolbar/wrench_menu.cc	2015-07-29 23:26:14.624160555 +0200
