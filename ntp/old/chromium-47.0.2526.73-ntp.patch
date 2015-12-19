@@ -146,6 +146,15 @@ diff -pru chromium-46.0.2490.13.orig/chrome/browser/search/search.cc chromium-46
 diff -pru chromium-46.0.2490.13.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc chromium-46.0.2490.13/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
 --- chromium-46.0.2490.13.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2015-09-02 21:00:31.000000000 +0200
 +++ chromium-46.0.2490.13/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2015-09-14 22:16:36.983289066 +0200
+@@ -23,7 +23,7 @@ SearchIPCRouterPolicyImpl::SearchIPCRout
+ SearchIPCRouterPolicyImpl::~SearchIPCRouterPolicyImpl() {}
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldProcessSetVoiceSearchSupport() {
+-  return true;
++  return false;
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldProcessFocusOmnibox(bool is_active_tab) {
 @@ -35,15 +35,15 @@ bool SearchIPCRouterPolicyImpl::ShouldPr
  }
  
@@ -174,6 +183,15 @@ diff -pru chromium-46.0.2490.13.orig/chrome/browser/ui/search/search_ipc_router_
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldSendThemeBackgroundInfo() {
+@@ -97,7 +97,7 @@ bool SearchIPCRouterPolicyImpl::ShouldSe
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldSendToggleVoiceSearch() {
+-  return true;
++  return false;
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldSubmitQuery() {
 diff -pru chromium-46.0.2490.13.orig/components/history/core/browser/top_sites_backend.cc chromium-46.0.2490.13/components/history/core/browser/top_sites_backend.cc
 --- chromium-46.0.2490.13.orig/components/history/core/browser/top_sites_backend.cc	2015-08-22 21:01:54.000000000 +0200
 +++ chromium-46.0.2490.13/components/history/core/browser/top_sites_backend.cc	2015-09-14 22:16:36.983289066 +0200

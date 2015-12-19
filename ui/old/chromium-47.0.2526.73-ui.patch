@@ -63,9 +63,9 @@ diff -pruN chromium-45.0.2454.15.orig/chrome/browser/ui/views/panels/panel_frame
  
  // The extra padding between the button and the top edge.
  const int kExtraPaddingBetweenButtonAndTop = 1;
-diff -pruN chromium-45.0.2454.15.orig/chrome/browser/ui/views/toolbar/app_menu.cc chromium-45.0.2454.15/chrome/browser/ui/views/toolbar/app_menu.cc
---- chromium-45.0.2454.15.orig/chrome/browser/ui/views/toolbar/app_menu.cc	2015-07-23 22:09:22.000000000 +0200
-+++ chromium-45.0.2454.15/chrome/browser/ui/views/toolbar/app_menu.cc	2015-07-29 23:26:14.624160555 +0200
+diff -pruN chromium-45.0.2454.15.orig/chrome/browser/ui/views/toolbar/wrench_menu.cc chromium-45.0.2454.15/chrome/browser/ui/views/toolbar/wrench_menu.cc
+--- chromium-45.0.2454.15.orig/chrome/browser/ui/views/toolbar/wrench_menu.cc	2015-07-23 22:09:22.000000000 +0200
++++ chromium-45.0.2454.15/chrome/browser/ui/views/toolbar/wrench_menu.cc	2015-07-29 23:26:14.624160555 +0200
 @@ -77,7 +77,7 @@ using views::View;
  namespace {
  
