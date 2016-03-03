@@ -1,7 +1,7 @@
-diff -pruN chromium-49.0.2623.75.orig/chrome/browser/extensions/extension_service.cc chromium-49.0.2623.75/chrome/browser/extensions/extension_service.cc
---- chromium-49.0.2623.75.orig/chrome/browser/extensions/extension_service.cc	2016-03-03 23:46:09.790590319 +0100
-+++ chromium-49.0.2623.75/chrome/browser/extensions/extension_service.cc	2016-03-03 23:36:08.837237466 +0100
-@@ -1076,13 +1076,6 @@ void ExtensionService::NotifyExtensionLo
+diff -pru chromium-46.0.2490.13.orig/chrome/browser/extensions/extension_service.cc chromium-46.0.2490.13/chrome/browser/extensions/extension_service.cc
+--- chromium-46.0.2490.13.orig/chrome/browser/extensions/extension_service.cc	2015-09-02 22:10:15.000000000 +0200
++++ chromium-46.0.2490.13/chrome/browser/extensions/extension_service.cc	2015-09-14 22:16:36.983289066 +0200
+@@ -1093,13 +1093,6 @@ void ExtensionService::NotifyExtensionLo
      ThemeSource* theme_source = new ThemeSource(profile_);
      content::URLDataSource::Add(profile_, theme_source);
    }
@@ -15,10 +15,10 @@ diff -pruN chromium-49.0.2623.75.orig/chrome/browser/extensions/extension_servic
  }
  
  void ExtensionService::OnExtensionRegisteredWithRequestContexts(
-diff -pruN chromium-49.0.2623.75.orig/chrome/browser/resources/local_ntp/local_ntp.html chromium-49.0.2623.75/chrome/browser/resources/local_ntp/local_ntp.html
---- chromium-49.0.2623.75.orig/chrome/browser/resources/local_ntp/local_ntp.html	2016-03-03 23:46:09.793923652 +0100
-+++ chromium-49.0.2623.75/chrome/browser/resources/local_ntp/local_ntp.html	2016-03-03 23:36:08.837237466 +0100
-@@ -13,19 +13,6 @@
+diff -pru chromium-46.0.2490.13.orig/chrome/browser/resources/local_ntp/local_ntp.html chromium-46.0.2490.13/chrome/browser/resources/local_ntp/local_ntp.html
+--- chromium-46.0.2490.13.orig/chrome/browser/resources/local_ntp/local_ntp.html	2015-08-22 21:01:52.000000000 +0200
++++ chromium-46.0.2490.13/chrome/browser/resources/local_ntp/local_ntp.html	2015-09-14 22:16:36.983289066 +0200
+@@ -12,19 +12,6 @@
  </head>
  <body>
    <div id="ntp-contents">
@@ -38,18 +38,10 @@ diff -pruN chromium-49.0.2623.75.orig/chrome/browser/resources/local_ntp/local_n
      <div id="attribution"><div id="attribution-text"></div></div>
    </div>
  </body>
-diff -pruN chromium-49.0.2623.75.orig/chrome/browser/resources/local_ntp/local_ntp.js chromium-49.0.2623.75/chrome/browser/resources/local_ntp/local_ntp.js
---- chromium-49.0.2623.75.orig/chrome/browser/resources/local_ntp/local_ntp.js	2016-03-03 23:46:09.793923652 +0100
-+++ chromium-49.0.2623.75/chrome/browser/resources/local_ntp/local_ntp.js	2016-03-03 23:48:55.313929028 +0100
-@@ -556,7 +556,6 @@ function updateContentWidth() {
-   // We add an extra pixel because rounding errors on different zooms can
-   // make the width shorter than it should be.
-   var tilesContainerWidth = Math.ceil(numColumnsShown * tileRequiredWidth) + 1;
--  $(IDS.TILES).style.width = tilesContainerWidth + 'px';
-   if (fakebox) {
-     // -2 to account for border.
-     var fakeboxWidth = (tilesContainerWidth - NTP_DESIGN.tileMargin - 2);
-@@ -769,6 +768,8 @@ function init() {
+diff -pru chromium-46.0.2490.13.orig/chrome/browser/resources/local_ntp/local_ntp.js chromium-46.0.2490.13/chrome/browser/resources/local_ntp/local_ntp.js
+--- chromium-46.0.2490.13.orig/chrome/browser/resources/local_ntp/local_ntp.js	2015-09-02 22:10:15.000000000 +0200
++++ chromium-46.0.2490.13/chrome/browser/resources/local_ntp/local_ntp.js	2015-09-14 22:31:12.339943493 +0200
+@@ -761,6 +761,8 @@ function init() {
      modifyNtpDesignForIcons();
    document.querySelector('#ntp-contents').classList.add(NTP_DESIGN.mainClass);
  
@@ -58,7 +50,7 @@ diff -pruN chromium-49.0.2623.75.orig/chrome/browser/resources/local_ntp/local_n
    // Hide notifications after fade out, so we can't focus on links via keyboard.
    notification.addEventListener('webkitTransitionEnd', hideNotification);
  
-@@ -794,6 +795,7 @@ function init() {
+@@ -786,6 +788,7 @@ function init() {
    createAndAppendElement(
        notificationCloseButton, 'div', CLASSES.BLACKLIST_BUTTON_INNER);
    notificationCloseButton.addEventListener('click', hideNotification);
@@ -66,7 +58,7 @@ diff -pruN chromium-49.0.2623.75.orig/chrome/browser/resources/local_ntp/local_n
  
    window.addEventListener('resize', onResize);
    updateContentWidth();
-@@ -802,7 +804,6 @@ function init() {
+@@ -794,7 +797,6 @@ function init() {
  
    ntpApiHandle = topLevelHandle.newTabPage;
    ntpApiHandle.onthemechange = onThemeChange;
@@ -74,7 +66,7 @@ diff -pruN chromium-49.0.2623.75.orig/chrome/browser/resources/local_ntp/local_n
  
    ntpApiHandle.oninputstart = onInputStart;
    ntpApiHandle.oninputcancel = restoreNtp;
-@@ -860,10 +861,13 @@ function init() {
+@@ -852,10 +854,13 @@ function init() {
      document.documentElement.classList.add(CLASSES.RTL);
    }
  
@@ -88,7 +80,7 @@ diff -pruN chromium-49.0.2623.75.orig/chrome/browser/resources/local_ntp/local_n
  
    var args = [];
  
-@@ -877,6 +881,8 @@ function init() {
+@@ -869,6 +874,8 @@ function init() {
    args.push('removeTooltip=' +
        encodeURIComponent(configData.translatedStrings.removeThumbnailTooltip));
  
@@ -97,7 +89,7 @@ diff -pruN chromium-49.0.2623.75.orig/chrome/browser/resources/local_ntp/local_n
    iframe.src = '//most-visited/single.html?' + args.join('&');
    $(IDS.TILES).appendChild(iframe);
  
-@@ -886,6 +892,7 @@ function init() {
+@@ -878,6 +885,7 @@ function init() {
    };
  
    window.addEventListener('message', handlePostMessage);
@@ -105,10 +97,10 @@ diff -pruN chromium-49.0.2623.75.orig/chrome/browser/resources/local_ntp/local_n
  }
  
  
-diff -pruN chromium-49.0.2623.75.orig/chrome/browser/search/instant_service.cc chromium-49.0.2623.75/chrome/browser/search/instant_service.cc
---- chromium-49.0.2623.75.orig/chrome/browser/search/instant_service.cc	2016-03-03 23:46:09.793923652 +0100
-+++ chromium-49.0.2623.75/chrome/browser/search/instant_service.cc	2016-03-03 23:36:08.840570800 +0100
-@@ -65,9 +65,7 @@ const char kLocalNTPSuggestionService[]
+diff -pru chromium-46.0.2490.13.orig/chrome/browser/search/instant_service.cc chromium-46.0.2490.13/chrome/browser/search/instant_service.cc
+--- chromium-46.0.2490.13.orig/chrome/browser/search/instant_service.cc	2015-09-02 21:00:31.000000000 +0200
++++ chromium-46.0.2490.13/chrome/browser/search/instant_service.cc	2015-09-14 22:22:11.119951060 +0200
+@@ -60,9 +60,7 @@ const char kLocalNTPSuggestionService[]
  const char kLocalNTPSuggestionServiceEnabled[] = "Enabled";
  
  bool IsLocalNTPSuggestionServiceEnabled() {
@@ -119,7 +111,7 @@ diff -pruN chromium-49.0.2623.75.orig/chrome/browser/search/instant_service.cc c
  }
  
  }  // namespace
-@@ -135,9 +133,6 @@ InstantService::InstantService(Profile*
+@@ -131,9 +129,6 @@ InstantService::InstantService(Profile*
    // on Android.
  #if !defined(OS_ANDROID)
    content::URLDataSource::Add(profile_, new LocalNtpSource(profile_));
@@ -129,7 +121,7 @@ diff -pruN chromium-49.0.2623.75.orig/chrome/browser/search/instant_service.cc c
  #endif  // !defined(OS_ANDROID)
  
    favicon::FallbackIconService* fallback_icon_service =
-@@ -150,9 +145,6 @@ InstantService::InstantService(Profile*
+@@ -146,9 +141,6 @@ InstantService::InstantService(Profile*
        profile_, new FaviconSource(profile_, FaviconSource::FAVICON));
    content::URLDataSource::Add(
        profile_, new LargeIconSource(fallback_icon_service, large_icon_service));
@@ -139,10 +131,10 @@ diff -pruN chromium-49.0.2623.75.orig/chrome/browser/search/instant_service.cc c
  
    if (IsLocalNTPSuggestionServiceEnabled()) {
      suggestions_service_ =
-diff -pruN chromium-49.0.2623.75.orig/chrome/browser/search/search.cc chromium-49.0.2623.75/chrome/browser/search/search.cc
---- chromium-49.0.2623.75.orig/chrome/browser/search/search.cc	2016-03-03 23:46:09.793923652 +0100
-+++ chromium-49.0.2623.75/chrome/browser/search/search.cc	2016-03-03 23:36:08.840570800 +0100
-@@ -244,7 +244,7 @@ NewTabURLState IsValidNewTabURL(Profile*
+diff -pru chromium-46.0.2490.13.orig/chrome/browser/search/search.cc chromium-46.0.2490.13/chrome/browser/search/search.cc
+--- chromium-46.0.2490.13.orig/chrome/browser/search/search.cc	2015-09-02 21:00:31.000000000 +0200
++++ chromium-46.0.2490.13/chrome/browser/search/search.cc	2015-09-14 22:16:36.983289066 +0200
+@@ -242,7 +242,7 @@ NewTabURLState IsValidNewTabURL(Profile*
      return NEW_TAB_URL_INSECURE;
    if (!IsURLAllowedForSupervisedUser(new_tab_url, profile))
      return NEW_TAB_URL_BLOCKED;
@@ -151,10 +143,10 @@ diff -pruN chromium-49.0.2623.75.orig/chrome/browser/search/search.cc chromium-4
  }
  
  // Used to look up the URL to use for the New Tab page. Also tracks how we
-diff -pruN chromium-49.0.2623.75.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc chromium-49.0.2623.75/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
---- chromium-49.0.2623.75.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2016-03-03 23:46:09.793923652 +0100
-+++ chromium-49.0.2623.75/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2016-03-03 23:36:08.840570800 +0100
-@@ -31,15 +31,15 @@ bool SearchIPCRouterPolicyImpl::ShouldPr
+diff -pru chromium-46.0.2490.13.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc chromium-46.0.2490.13/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
+--- chromium-46.0.2490.13.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2015-09-02 21:00:31.000000000 +0200
++++ chromium-46.0.2490.13/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2015-09-14 22:16:36.983289066 +0200
+@@ -35,15 +35,15 @@ bool SearchIPCRouterPolicyImpl::ShouldPr
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldProcessDeleteMostVisitedItem() {
@@ -173,7 +165,7 @@ diff -pruN chromium-49.0.2623.75.orig/chrome/browser/ui/search/search_ipc_router
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldProcessLogEvent() {
-@@ -81,7 +81,7 @@ bool SearchIPCRouterPolicyImpl::ShouldSe
+@@ -89,7 +89,7 @@ bool SearchIPCRouterPolicyImpl::ShouldSe
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldSendMostVisitedItems() {
@@ -182,10 +174,10 @@ diff -pruN chromium-49.0.2623.75.orig/chrome/browser/ui/search/search_ipc_router
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldSendThemeBackgroundInfo() {
-diff -pruN chromium-49.0.2623.75.orig/components/history/core/browser/top_sites_backend.cc chromium-49.0.2623.75/components/history/core/browser/top_sites_backend.cc
---- chromium-49.0.2623.75.orig/components/history/core/browser/top_sites_backend.cc	2016-03-03 23:46:09.793923652 +0100
-+++ chromium-49.0.2623.75/components/history/core/browser/top_sites_backend.cc	2016-03-03 23:36:08.840570800 +0100
-@@ -23,58 +23,36 @@ namespace history {
+diff -pru chromium-46.0.2490.13.orig/components/history/core/browser/top_sites_backend.cc chromium-46.0.2490.13/components/history/core/browser/top_sites_backend.cc
+--- chromium-46.0.2490.13.orig/components/history/core/browser/top_sites_backend.cc	2015-08-22 21:01:54.000000000 +0200
++++ chromium-46.0.2490.13/components/history/core/browser/top_sites_backend.cc	2015-09-14 22:16:36.983289066 +0200
+@@ -21,58 +21,36 @@ namespace history {
  
  TopSitesBackend::TopSitesBackend(
      const scoped_refptr<base::SingleThreadTaskRunner>& db_task_runner)
