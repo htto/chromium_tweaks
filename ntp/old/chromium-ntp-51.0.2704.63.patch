@@ -129,11 +129,13 @@ diff -pruN chromium-49.0.2623.75.orig/chrome/browser/search/instant_service.cc c
  #endif  // !defined(OS_ANDROID)
  
    favicon::FallbackIconService* fallback_icon_service =
-@@ -150,7 +145,6 @@ InstantService::InstantService(Profile*
+@@ -150,9 +145,6 @@ InstantService::InstantService(Profile*
        profile_, new FaviconSource(profile_, FaviconSource::FAVICON));
    content::URLDataSource::Add(
        profile_, new LargeIconSource(fallback_icon_service, large_icon_service));
 -  content::URLDataSource::Add(profile_, new MostVisitedIframeSource());
+-  content::URLDataSource::Add(
+-      profile_, new suggestions::SuggestionsSource(profile_));
  
    if (IsLocalNTPSuggestionServiceEnabled()) {
      suggestions_service_ =
