@@ -1,7 +1,7 @@
-diff -pruN chromium-54.0.2840.34.orig/chrome/browser/extensions/extension_service.cc chromium-54.0.2840.34/chrome/browser/extensions/extension_service.cc
---- chromium-54.0.2840.34.orig/chrome/browser/extensions/extension_service.cc	2016-09-29 14:48:53.413210646 +0200
-+++ chromium-54.0.2840.34/chrome/browser/extensions/extension_service.cc	2016-09-29 14:49:09.796543750 +0200
-@@ -1084,13 +1084,6 @@ void ExtensionService::NotifyExtensionLo
+diff -pruN chromium-58.0.3029.19.orig/chrome/browser/extensions/extension_service.cc chromium-58.0.3029.19/chrome/browser/extensions/extension_service.cc
+--- chromium-58.0.3029.19.orig/chrome/browser/extensions/extension_service.cc	2017-03-14 20:04:21.000000000 +0100
++++ chromium-58.0.3029.19/chrome/browser/extensions/extension_service.cc	2017-03-21 21:41:02.867956425 +0100
+@@ -1140,13 +1140,6 @@ void ExtensionService::NotifyExtensionLo
      ThemeSource* theme_source = new ThemeSource(profile_);
      content::URLDataSource::Add(profile_, theme_source);
    }
@@ -15,14 +15,15 @@ diff -pruN chromium-54.0.2840.34.orig/chrome/browser/extensions/extension_servic
  }
  
  void ExtensionService::OnExtensionRegisteredWithRequestContexts(
-diff -pruN chromium-54.0.2840.34.orig/chrome/browser/resources/local_ntp/local_ntp.html chromium-54.0.2840.34/chrome/browser/resources/local_ntp/local_ntp.html
---- chromium-54.0.2840.34.orig/chrome/browser/resources/local_ntp/local_ntp.html	2016-09-29 14:48:53.413210646 +0200
-+++ chromium-54.0.2840.34/chrome/browser/resources/local_ntp/local_ntp.html	2016-09-29 14:49:09.796543750 +0200
-@@ -13,19 +13,6 @@
- </head>
- <body>
-   <div id="ntp-contents">
+diff -pruN chromium-58.0.3029.19.orig/chrome/browser/resources/local_ntp/local_ntp.html chromium-58.0.3029.19/chrome/browser/resources/local_ntp/local_ntp.html
+--- chromium-58.0.3029.19.orig/chrome/browser/resources/local_ntp/local_ntp.html	2017-03-14 20:04:22.000000000 +0100
++++ chromium-58.0.3029.19/chrome/browser/resources/local_ntp/local_ntp.html	2017-03-21 21:41:02.871289758 +0100
+@@ -20,20 +20,6 @@
+           aria-hidden="true">
+       <div id="cursor"></div>
+     </div>
 -    <div id="most-visited">
+-      <!-- The container for the tiles. The MV iframe goes in here. -->
 -      <div id="mv-tiles"></div>
 -      <!-- Notification shown when a tile is blacklisted. -->
 -      <div id="mv-notice" class="mv-notice-hide">
@@ -38,79 +39,97 @@ diff -pruN chromium-54.0.2840.34.orig/chrome/browser/resources/local_ntp/local_n
      <div id="attribution"><div id="attribution-text"></div></div>
    </div>
  </body>
-diff -pruN chromium-54.0.2840.34.orig/chrome/browser/resources/local_ntp/local_ntp.js chromium-54.0.2840.34/chrome/browser/resources/local_ntp/local_ntp.js
---- chromium-54.0.2840.34.orig/chrome/browser/resources/local_ntp/local_ntp.js	2016-09-29 14:48:53.413210646 +0200
-+++ chromium-54.0.2840.34/chrome/browser/resources/local_ntp/local_ntp.js	2016-09-29 14:49:09.796543750 +0200
-@@ -556,7 +556,6 @@ function updateContentWidth() {
-   // We add an extra pixel because rounding errors on different zooms can
-   // make the width shorter than it should be.
-   var tilesContainerWidth = Math.ceil(numColumnsShown * tileRequiredWidth) + 1;
--  $(IDS.TILES).style.width = tilesContainerWidth + 'px';
-   if (fakebox) {
-     // -2 to account for border.
-     var fakeboxWidth = (tilesContainerWidth - NTP_DESIGN.tileMargin - 2);
-@@ -769,6 +768,8 @@ function init() {
-     modifyNtpDesignForIcons();
-   document.querySelector('#ntp-contents').classList.add(NTP_DESIGN.mainClass);
- 
-+  if (false)
-+  {
-   // Hide notifications after fade out, so we can't focus on links via keyboard.
-   notification.addEventListener('webkitTransitionEnd', hideNotification);
- 
-@@ -794,6 +795,7 @@ function init() {
-   createAndAppendElement(
-       notificationCloseButton, 'div', CLASSES.BLACKLIST_BUTTON_INNER);
-   notificationCloseButton.addEventListener('click', hideNotification);
-+  }
- 
-   window.addEventListener('resize', onResize);
-   updateContentWidth();
-@@ -802,7 +804,6 @@ function init() {
- 
-   ntpApiHandle = topLevelHandle.newTabPage;
-   ntpApiHandle.onthemechange = onThemeChange;
--  ntpApiHandle.onmostvisitedchange = onMostVisitedChange;
- 
-   ntpApiHandle.oninputstart = onInputStart;
-   ntpApiHandle.oninputcancel = restoreNtp;
-@@ -860,10 +861,13 @@ function init() {
-     document.documentElement.classList.add(CLASSES.RTL);
+diff -pruN chromium-58.0.3029.19.orig/chrome/browser/resources/local_ntp/local_ntp.js chromium-58.0.3029.19/chrome/browser/resources/local_ntp/local_ntp.js
+--- chromium-58.0.3029.19.orig/chrome/browser/resources/local_ntp/local_ntp.js	2017-03-14 20:04:22.000000000 +0100
++++ chromium-58.0.3029.19/chrome/browser/resources/local_ntp/local_ntp.js	2017-03-21 21:40:32.787956845 +0100
+@@ -210,8 +210,6 @@ function renderTheme() {
+     titleColor = NTP_DESIGN.titleColorAgainstDark;
    }
- 
-+  if (false)
-+  {
-   var iframe = document.createElement('iframe');
-   // Change the order of tabbing the page to start with NTP tiles.
-   iframe.setAttribute('tabindex', '1');
-   iframe.id = 'mv-single';
-+  }
- 
-   var args = [];
- 
-@@ -877,6 +881,8 @@ function init() {
-   args.push('removeTooltip=' +
-       encodeURIComponent(configData.translatedStrings.removeThumbnailTooltip));
- 
-+  if (false)
-+  {
-   iframe.src = '//most-visited/single.html?' + args.join('&');
-   $(IDS.TILES).appendChild(iframe);
- 
-@@ -886,6 +892,7 @@ function init() {
-   };
- 
-   window.addEventListener('message', handlePostMessage);
-+  }
+   themeinfo.tileTitleColor = convertToRGBAColor(titleColor);
+-
+-  $(IDS.TILES_IFRAME).contentWindow.postMessage(themeinfo, '*');
  }
  
  
-diff -pruN chromium-54.0.2840.34.orig/chrome/browser/search/instant_service.cc chromium-54.0.2840.34/chrome/browser/search/instant_service.cc
---- chromium-54.0.2840.34.orig/chrome/browser/search/instant_service.cc	2016-09-29 14:48:53.413210646 +0200
-+++ chromium-54.0.2840.34/chrome/browser/search/instant_service.cc	2016-09-29 14:49:09.796543750 +0200
-@@ -125,9 +125,6 @@ InstantService::InstantService(Profile*
-   // on Android.
- #if !defined(OS_ANDROID)
+@@ -435,13 +433,7 @@ function updateContentWidth() {
+  * response to resizing. Also shows or hides extra tiles tiles according to the
+  * new width of the page.
+  */
+-function onResize() {
+-  if (updateContentWidth()) {
+-    // If the number of tile columns changes, inform the iframe.
+-    $(IDS.TILES_IFRAME).contentWindow.postMessage(
+-        {cmd: 'tilesVisible', maxVisible: numColumnsShown * NUM_ROWS}, '*');
+-  }
+-}
++function onResize() { }
+ 
+ 
+ /**
+@@ -543,36 +535,12 @@ function handlePostMessage(event) {
+  * section, and Google-specific elements for a Google-provided page.
+  */
+ function init() {
+-  // Hide notifications after fade out, so we can't focus on links via keyboard.
+-  $(IDS.NOTIFICATION).addEventListener('transitionend', hideNotification);
+-
+-  $(IDS.NOTIFICATION_MESSAGE).textContent =
+-      configData.translatedStrings.thumbnailRemovedNotification;
+-
+-  var undoLink = $(IDS.UNDO_LINK);
+-  undoLink.addEventListener('click', onUndo);
+-  registerKeyHandler(undoLink, KEYCODE.ENTER, onUndo);
+-  undoLink.textContent = configData.translatedStrings.undoThumbnailRemove;
+-
+-  var restoreAllLink = $(IDS.RESTORE_ALL_LINK);
+-  restoreAllLink.addEventListener('click', onRestoreAll);
+-  registerKeyHandler(restoreAllLink, KEYCODE.ENTER, onRestoreAll);
+-  restoreAllLink.textContent =
+-      configData.translatedStrings.restoreThumbnailsShort;
+-
+-  $(IDS.ATTRIBUTION_TEXT).textContent =
+-      configData.translatedStrings.attributionIntro;
+-
+-  $(IDS.NOTIFICATION_CLOSE_BUTTON).addEventListener('click', hideNotification);
+-
+   window.addEventListener('resize', onResize);
+-  updateContentWidth();
+ 
+   var embeddedSearchApiHandle = window.chrome.embeddedSearch;
+ 
+   ntpApiHandle = embeddedSearchApiHandle.newTabPage;
+   ntpApiHandle.onthemechange = onThemeChange;
+-  ntpApiHandle.onmostvisitedchange = onMostVisitedChange;
+ 
+   var searchboxApiHandle = embeddedSearchApiHandle.searchBox;
+ 
+@@ -645,20 +613,6 @@ function init() {
+ 
+   args.push('removeTooltip=' +
+       encodeURIComponent(configData.translatedStrings.removeThumbnailTooltip));
+-
+-  // Create the most visited iframe.
+-  var iframe = document.createElement('iframe');
+-  iframe.id = IDS.TILES_IFRAME;
+-  iframe.tabIndex = 1;
+-  iframe.src = 'chrome-search://most-visited/single.html?' + args.join('&');
+-  $(IDS.TILES).appendChild(iframe);
+-
+-  iframe.onload = function() {
+-    reloadTiles();
+-    renderTheme();
+-  };
+-
+-  window.addEventListener('message', handlePostMessage);
+ }
+ 
+ 
+diff -pruN chromium-58.0.3029.19.orig/chrome/browser/search/instant_service.cc chromium-58.0.3029.19/chrome/browser/search/instant_service.cc
+--- chromium-58.0.3029.19.orig/chrome/browser/search/instant_service.cc	2017-03-14 20:04:22.000000000 +0100
++++ chromium-58.0.3029.19/chrome/browser/search/instant_service.cc	2017-03-21 21:41:02.871289758 +0100
+@@ -129,9 +129,6 @@ InstantService::InstantService(Profile*
+ 
+   content::URLDataSource::Add(profile_, new ThemeSource(profile_));
    content::URLDataSource::Add(profile_, new LocalNtpSource(profile_));
 -  content::URLDataSource::Add(profile_, new ThumbnailSource(profile_, false));
 -  content::URLDataSource::Add(profile_, new ThumbnailSource(profile_, true));
@@ -118,18 +137,18 @@ diff -pruN chromium-54.0.2840.34.orig/chrome/browser/search/instant_service.cc c
  #endif  // !defined(OS_ANDROID)
  
    favicon::FallbackIconService* fallback_icon_service =
-@@ -140,7 +137,6 @@ InstantService::InstantService(Profile*
+@@ -144,7 +141,6 @@ InstantService::InstantService(Profile*
        profile_, new FaviconSource(profile_, FaviconSource::FAVICON));
    content::URLDataSource::Add(
        profile_, new LargeIconSource(fallback_icon_service, large_icon_service));
 -  content::URLDataSource::Add(profile_, new MostVisitedIframeSource());
  }
  
- InstantService::~InstantService() {
-diff -pruN chromium-54.0.2840.34.orig/chrome/browser/search/search.cc chromium-54.0.2840.34/chrome/browser/search/search.cc
---- chromium-54.0.2840.34.orig/chrome/browser/search/search.cc	2016-09-29 14:48:53.416543979 +0200
-+++ chromium-54.0.2840.34/chrome/browser/search/search.cc	2016-09-29 14:49:09.799877082 +0200
-@@ -173,7 +173,7 @@ NewTabURLState IsValidNewTabURL(Profile*
+ InstantService::~InstantService() = default;
+diff -pruN chromium-58.0.3029.19.orig/chrome/browser/search/search.cc chromium-58.0.3029.19/chrome/browser/search/search.cc
+--- chromium-58.0.3029.19.orig/chrome/browser/search/search.cc	2017-03-14 20:04:22.000000000 +0100
++++ chromium-58.0.3029.19/chrome/browser/search/search.cc	2017-03-21 21:41:02.871289758 +0100
+@@ -183,7 +183,7 @@ NewTabURLState IsValidNewTabURL(Profile*
      return NEW_TAB_URL_INSECURE;
    if (!IsURLAllowedForSupervisedUser(new_tab_url, profile))
      return NEW_TAB_URL_BLOCKED;
@@ -138,9 +157,9 @@ diff -pruN chromium-54.0.2840.34.orig/chrome/browser/search/search.cc chromium-5
  }
  
  bool ShouldShowLocalNewTab(const GURL& url, Profile* profile) {
-diff -pruN chromium-54.0.2840.34.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc chromium-54.0.2840.34/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
---- chromium-54.0.2840.34.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2016-09-29 14:48:53.416543979 +0200
-+++ chromium-54.0.2840.34/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2016-09-29 14:49:09.799877082 +0200
+diff -pruN chromium-58.0.3029.19.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc chromium-58.0.3029.19/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
+--- chromium-58.0.3029.19.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2017-03-14 20:04:22.000000000 +0100
++++ chromium-58.0.3029.19/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2017-03-21 21:41:02.871289758 +0100
 @@ -27,15 +27,15 @@ bool SearchIPCRouterPolicyImpl::ShouldPr
  }
  
@@ -169,9 +188,9 @@ diff -pruN chromium-54.0.2840.34.orig/chrome/browser/ui/search/search_ipc_router
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldSendThemeBackgroundInfo() {
-diff -pruN chromium-54.0.2840.34.orig/components/history/core/browser/top_sites_backend.cc chromium-54.0.2840.34/components/history/core/browser/top_sites_backend.cc
---- chromium-54.0.2840.34.orig/components/history/core/browser/top_sites_backend.cc	2016-09-29 14:48:53.416543979 +0200
-+++ chromium-54.0.2840.34/components/history/core/browser/top_sites_backend.cc	2016-09-29 14:49:09.799877082 +0200
+diff -pruN chromium-58.0.3029.19.orig/components/history/core/browser/top_sites_backend.cc chromium-58.0.3029.19/components/history/core/browser/top_sites_backend.cc
+--- chromium-58.0.3029.19.orig/components/history/core/browser/top_sites_backend.cc	2017-03-14 20:04:24.000000000 +0100
++++ chromium-58.0.3029.19/components/history/core/browser/top_sites_backend.cc	2017-03-21 21:41:02.871289758 +0100
 @@ -23,58 +23,36 @@ namespace history {
  
  TopSitesBackend::TopSitesBackend(
