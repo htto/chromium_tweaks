@@ -2,17 +2,17 @@ diff -pruN chromium-55.0.2883.21.orig/chrome/browser/ui/views/tabs/tab.cc chromi
 --- chromium-55.0.2883.21.orig/chrome/browser/ui/views/tabs/tab.cc	2016-10-21 04:58:01.000000000 +0200
 +++ chromium-55.0.2883.21/chrome/browser/ui/views/tabs/tab.cc	2016-10-29 09:53:32.019938714 +0200
 @@ -239,12 +239,13 @@ gfx::Path GetFillPath(float scale, const
-   // The bottom of the tab needs to be pixel-aligned or else when we call
    // ClipPath with anti-aliasing enabled it can cause artifacts.
    const float bottom = std::ceil(size.height() * scale);
-+  const float inset = std::floor(endcap_width * scale / 2);
+   const float unscaled_endcap_width = GetUnscaledEndcapWidth();
++  const float inset = std::floor(unscaled_endcap_width * scale / 2);
  
    gfx::Path fill;
 -  fill.moveTo(right - 1, bottom);
 +  fill.moveTo(right - inset - 1, bottom);
    fill.rCubicTo(-0.75 * scale, 0, -1.625 * scale, -0.5 * scale, -2 * scale,
                  -1.5 * scale);
--  fill.lineTo(right - 1 - (endcap_width - 2) * scale, 2.5 * scale);
+-  fill.lineTo(right - 1 - (unscaled_endcap_width - 2) * scale, 2.5 * scale);
 +  fill.lineTo(right - inset - 1 - 2 * scale, 2.5 * scale);
    // Prevent overdraw in the center near minimum width (only happens if
    // scale < 2).  We could instead avoid this by increasing the tab inset
@@ -31,10 +31,10 @@ diff -pruN chromium-55.0.2883.21.orig/chrome/browser/ui/views/tabs/tab.cc chromi
                  1.5 * scale);
    fill.close();
 @@ -279,13 +280,15 @@ gfx::Path GetBorderPath(float scale,
-   const float top = scale - 1;
    const float right = size.width() * scale;
    const float bottom = size.height() * scale;
-+  const float inset = std::floor(endcap_width * scale / 2);
+   const float unscaled_endcap_width = GetUnscaledEndcapWidth();
++  const float inset = std::floor(unscaled_endcap_width * scale / 2);
  
    gfx::Path path;
    path.moveTo(0, bottom);
@@ -42,7 +42,7 @@ diff -pruN chromium-55.0.2883.21.orig/chrome/browser/ui/views/tabs/tab.cc chromi
 +  path.rLineTo(inset, 0);
    path.rCubicTo(0.75 * scale, 0, 1.625 * scale, -0.5 * scale, 2 * scale,
                  -1.5 * scale);
--  path.lineTo((endcap_width - 2) * scale, top + 1.5 * scale);
+-  path.lineTo((unscaled_endcap_width - 2) * scale, top + 1.5 * scale);
 +  path.lineTo(inset + 2 * scale, top + 1.5 * scale);
    if (extend_to_top) {
      // Create the vertical extension by extending the side diagonals until
@@ -53,7 +53,7 @@ diff -pruN chromium-55.0.2883.21.orig/chrome/browser/ui/views/tabs/tab.cc chromi
    } else {
 -    path.rCubicTo(0.375 * scale, -scale, 1.25 * scale, -1.5 * scale, 2 * scale,
 -                  -1.5 * scale);
--    path.lineTo(right - endcap_width * scale, top);
+-    path.lineTo(right - unscaled_endcap_width * scale, top);
 +    path.rCubicTo(0.375 * scale, -scale, 1.25 * scale, -1.5 * scale,
 +                  2 * scale, -1.5 * scale);
 +    path.lineTo(right - inset - 4 * scale, top);

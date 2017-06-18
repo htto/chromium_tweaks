@@ -127,7 +127,7 @@ diff -pruN chromium-58.0.3029.19.orig/chrome/browser/resources/local_ntp/local_n
 diff -pruN chromium-58.0.3029.19.orig/chrome/browser/search/instant_service.cc chromium-58.0.3029.19/chrome/browser/search/instant_service.cc
 --- chromium-58.0.3029.19.orig/chrome/browser/search/instant_service.cc	2017-03-14 20:04:22.000000000 +0100
 +++ chromium-58.0.3029.19/chrome/browser/search/instant_service.cc	2017-03-21 21:41:02.871289758 +0100
-@@ -129,13 +129,9 @@ InstantService::InstantService(Profile*
+@@ -129,9 +129,6 @@ InstantService::InstantService(Profile*
  
    content::URLDataSource::Add(profile_, new ThemeSource(profile_));
    content::URLDataSource::Add(profile_, new LocalNtpSource(profile_));
@@ -136,7 +136,11 @@ diff -pruN chromium-58.0.3029.19.orig/chrome/browser/search/instant_service.cc c
 -  content::URLDataSource::Add(profile_, new ThumbnailListSource(profile_));
  #endif  // !defined(OS_ANDROID)
  
-   content::URLDataSource::Add(profile_, new FaviconSource(profile_));
+   favicon::FallbackIconService* fallback_icon_service =
+@@ -144,7 +141,6 @@ InstantService::InstantService(Profile*
+       profile_, new FaviconSource(profile_, FaviconSource::FAVICON));
+   content::URLDataSource::Add(
+       profile_, new LargeIconSource(fallback_icon_service, large_icon_service));
 -  content::URLDataSource::Add(profile_, new MostVisitedIframeSource());
  }
  
