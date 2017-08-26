@@ -1,7 +1,7 @@
-diff -pruN chromium-62.0.3192.0.orig/chrome/browser/extensions/extension_service.cc chromium-62.0.3192.0/chrome/browser/extensions/extension_service.cc
---- chromium-62.0.3192.0.orig/chrome/browser/extensions/extension_service.cc	2017-08-22 21:04:39.000000000 +0200
-+++ chromium-62.0.3192.0/chrome/browser/extensions/extension_service.cc	2017-08-26 21:54:50.662424862 +0200
-@@ -1143,13 +1143,6 @@ void ExtensionService::NotifyExtensionLo
+diff -pruN chromium-61.0.3163.49.orig/chrome/browser/extensions/extension_service.cc chromium-61.0.3163.49/chrome/browser/extensions/extension_service.cc
+--- chromium-61.0.3163.49.orig/chrome/browser/extensions/extension_service.cc	2017-08-16 21:05:05.000000000 +0200
++++ chromium-61.0.3163.49/chrome/browser/extensions/extension_service.cc	2017-08-20 22:02:33.293432513 +0200
+@@ -1151,13 +1151,6 @@ void ExtensionService::NotifyExtensionLo
      ThemeSource* theme_source = new ThemeSource(profile_);
      content::URLDataSource::Add(profile_, theme_source);
    }
@@ -15,12 +15,12 @@ diff -pruN chromium-62.0.3192.0.orig/chrome/browser/extensions/extension_service
  }
  
  void ExtensionService::OnExtensionRegisteredWithRequestContexts(
-diff -pruN chromium-62.0.3192.0.orig/chrome/browser/resources/local_ntp/local_ntp.html chromium-62.0.3192.0/chrome/browser/resources/local_ntp/local_ntp.html
---- chromium-62.0.3192.0.orig/chrome/browser/resources/local_ntp/local_ntp.html	2017-08-22 21:04:39.000000000 +0200
-+++ chromium-62.0.3192.0/chrome/browser/resources/local_ntp/local_ntp.html	2017-08-26 21:54:50.662424862 +0200
-@@ -35,20 +35,6 @@
-         <div id="fakebox-speech" tabIndex="0" hidden></div>
-       </div>
+diff -pruN chromium-61.0.3163.49.orig/chrome/browser/resources/local_ntp/local_ntp.html chromium-61.0.3163.49/chrome/browser/resources/local_ntp/local_ntp.html
+--- chromium-61.0.3163.49.orig/chrome/browser/resources/local_ntp/local_ntp.html	2017-08-16 21:05:06.000000000 +0200
++++ chromium-61.0.3163.49/chrome/browser/resources/local_ntp/local_ntp.html	2017-08-20 22:02:33.293432513 +0200
+@@ -25,20 +25,6 @@
+           aria-hidden="true">
+       <div id="cursor"></div>
      </div>
 -    <div id="most-visited">
 -      <!-- The container for the tiles. The MV iframe goes in here. -->
@@ -39,10 +39,10 @@ diff -pruN chromium-62.0.3192.0.orig/chrome/browser/resources/local_ntp/local_nt
      <div id="attribution"><div id="attribution-text"></div></div>
    </div>
  
-diff -pruN chromium-62.0.3192.0.orig/chrome/browser/resources/local_ntp/local_ntp.js chromium-62.0.3192.0/chrome/browser/resources/local_ntp/local_ntp.js
---- chromium-62.0.3192.0.orig/chrome/browser/resources/local_ntp/local_ntp.js	2017-08-22 21:04:39.000000000 +0200
-+++ chromium-62.0.3192.0/chrome/browser/resources/local_ntp/local_ntp.js	2017-08-26 21:54:50.662424862 +0200
-@@ -177,8 +177,6 @@ function renderTheme() {
+diff -pruN chromium-61.0.3163.49.orig/chrome/browser/resources/local_ntp/local_ntp.js chromium-61.0.3163.49/chrome/browser/resources/local_ntp/local_ntp.js
+--- chromium-61.0.3163.49.orig/chrome/browser/resources/local_ntp/local_ntp.js	2017-08-16 21:05:06.000000000 +0200
++++ chromium-61.0.3163.49/chrome/browser/resources/local_ntp/local_ntp.js	2017-08-20 22:02:33.296765845 +0200
+@@ -211,8 +211,6 @@ function renderTheme() {
      titleColor = NTP_DESIGN.titleColorAgainstDark;
    }
    themeinfo.tileTitleColor = convertToRGBAColor(titleColor);
@@ -51,7 +51,22 @@ diff -pruN chromium-62.0.3192.0.orig/chrome/browser/resources/local_ntp/local_nt
  }
  
  
-@@ -477,33 +475,10 @@ function handlePostMessage(event) {
+@@ -426,13 +424,7 @@ function updateContentWidth() {
+  * response to resizing. Also shows or hides extra tiles tiles according to the
+  * new width of the page.
+  */
+-function onResize() {
+-  if (updateContentWidth()) {
+-    // If the number of tile columns changes, inform the iframe.
+-    $(IDS.TILES_IFRAME).contentWindow.postMessage(
+-        {cmd: 'tilesVisible', maxVisible: numColumnsShown * NUM_ROWS}, '*');
+-  }
+-}
++function onResize() { }
+ 
+ 
+ /**
+@@ -534,36 +526,12 @@ function handlePostMessage(event) {
   * section, and Google-specific elements for a Google-provided page.
   */
  function init() {
@@ -77,6 +92,9 @@ diff -pruN chromium-62.0.3192.0.orig/chrome/browser/resources/local_ntp/local_nt
 -
 -  $(IDS.NOTIFICATION_CLOSE_BUTTON).addEventListener('click', hideNotification);
 -
+   window.addEventListener('resize', onResize);
+-  updateContentWidth();
+ 
    var embeddedSearchApiHandle = window.chrome.embeddedSearch;
  
    ntpApiHandle = embeddedSearchApiHandle.newTabPage;
@@ -85,7 +103,7 @@ diff -pruN chromium-62.0.3192.0.orig/chrome/browser/resources/local_ntp/local_nt
  
    var searchboxApiHandle = embeddedSearchApiHandle.searchBox;
  
-@@ -606,20 +581,6 @@ function init() {
+@@ -647,20 +615,6 @@ function init() {
  
    args.push('removeTooltip=' +
        encodeURIComponent(configData.translatedStrings.removeThumbnailTooltip));
@@ -106,9 +124,9 @@ diff -pruN chromium-62.0.3192.0.orig/chrome/browser/resources/local_ntp/local_nt
  }
  
  
-diff -pruN chromium-62.0.3192.0.orig/chrome/browser/search/instant_service.cc chromium-62.0.3192.0/chrome/browser/search/instant_service.cc
---- chromium-62.0.3192.0.orig/chrome/browser/search/instant_service.cc	2017-08-22 21:04:40.000000000 +0200
-+++ chromium-62.0.3192.0/chrome/browser/search/instant_service.cc	2017-08-26 21:54:50.662424862 +0200
+diff -pruN chromium-61.0.3163.49.orig/chrome/browser/search/instant_service.cc chromium-61.0.3163.49/chrome/browser/search/instant_service.cc
+--- chromium-61.0.3163.49.orig/chrome/browser/search/instant_service.cc	2017-08-16 21:05:06.000000000 +0200
++++ chromium-61.0.3163.49/chrome/browser/search/instant_service.cc	2017-08-20 22:02:33.296765845 +0200
 @@ -123,13 +123,9 @@ InstantService::InstantService(Profile*
  
    content::URLDataSource::Add(profile_, new ThemeSource(profile_));
@@ -123,9 +141,9 @@ diff -pruN chromium-62.0.3192.0.orig/chrome/browser/search/instant_service.cc ch
  }
  
  InstantService::~InstantService() = default;
-diff -pruN chromium-62.0.3192.0.orig/chrome/browser/search/search.cc chromium-62.0.3192.0/chrome/browser/search/search.cc
---- chromium-62.0.3192.0.orig/chrome/browser/search/search.cc	2017-08-22 21:04:40.000000000 +0200
-+++ chromium-62.0.3192.0/chrome/browser/search/search.cc	2017-08-26 21:54:50.665758195 +0200
+diff -pruN chromium-61.0.3163.49.orig/chrome/browser/search/search.cc chromium-61.0.3163.49/chrome/browser/search/search.cc
+--- chromium-61.0.3163.49.orig/chrome/browser/search/search.cc	2017-08-16 21:05:06.000000000 +0200
++++ chromium-61.0.3163.49/chrome/browser/search/search.cc	2017-08-20 22:02:33.296765845 +0200
 @@ -168,7 +168,7 @@ NewTabURLState IsValidNewTabURL(Profile*
      return NEW_TAB_URL_INSECURE;
    if (!IsURLAllowedForSupervisedUser(new_tab_url, profile))
@@ -135,9 +153,9 @@ diff -pruN chromium-62.0.3192.0.orig/chrome/browser/search/search.cc chromium-62
  }
  
  bool ShouldShowLocalNewTab(const GURL& url, Profile* profile) {
-diff -pruN chromium-62.0.3192.0.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc chromium-62.0.3192.0/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
---- chromium-62.0.3192.0.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2017-08-22 21:04:40.000000000 +0200
-+++ chromium-62.0.3192.0/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2017-08-26 21:54:50.665758195 +0200
+diff -pruN chromium-61.0.3163.49.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc chromium-61.0.3163.49/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
+--- chromium-61.0.3163.49.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2017-08-16 21:05:06.000000000 +0200
++++ chromium-61.0.3163.49/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2017-08-20 22:02:33.296765845 +0200
 @@ -27,15 +27,15 @@ bool SearchIPCRouterPolicyImpl::ShouldPr
  }
  
@@ -166,9 +184,9 @@ diff -pruN chromium-62.0.3192.0.orig/chrome/browser/ui/search/search_ipc_router_
  }
  
  bool SearchIPCRouterPolicyImpl::ShouldSendThemeBackgroundInfo() {
-diff -pruN chromium-62.0.3192.0.orig/components/history/core/browser/top_sites_backend.cc chromium-62.0.3192.0/components/history/core/browser/top_sites_backend.cc
---- chromium-62.0.3192.0.orig/components/history/core/browser/top_sites_backend.cc	2017-08-22 21:04:42.000000000 +0200
-+++ chromium-62.0.3192.0/components/history/core/browser/top_sites_backend.cc	2017-08-26 21:54:50.665758195 +0200
+diff -pruN chromium-61.0.3163.49.orig/components/history/core/browser/top_sites_backend.cc chromium-61.0.3163.49/components/history/core/browser/top_sites_backend.cc
+--- chromium-61.0.3163.49.orig/components/history/core/browser/top_sites_backend.cc	2017-08-16 21:05:09.000000000 +0200
++++ chromium-61.0.3163.49/components/history/core/browser/top_sites_backend.cc	2017-08-20 22:02:33.296765845 +0200
 @@ -24,7 +24,7 @@
  namespace history {
  
@@ -176,9 +194,9 @@ diff -pruN chromium-62.0.3192.0.orig/components/history/core/browser/top_sites_b
 -    : db_(new TopSitesDatabase()),
 +    : db_(static_cast< TopSitesDatabase *> (NULL)),
        db_task_runner_(base::CreateSequencedTaskRunnerWithTraits(
-           {base::TaskPriority::USER_VISIBLE,
-            base::TaskShutdownBehavior::BLOCK_SHUTDOWN, base::MayBlock()})) {
-@@ -33,52 +33,30 @@ TopSitesBackend::TopSitesBackend()
+           {base::TaskPriority::USER_VISIBLE, base::MayBlock()})) {
+   DCHECK(db_task_runner_);
+@@ -32,52 +32,30 @@ TopSitesBackend::TopSitesBackend()
  
  void TopSitesBackend::Init(const base::FilePath& path) {
    db_path_ = path;

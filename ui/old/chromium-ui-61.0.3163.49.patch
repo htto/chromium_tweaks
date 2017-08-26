@@ -1,7 +1,7 @@
-diff -pruN chromium-62.0.3192.0.orig/chrome/browser/ui/views/tabs/new_tab_button.cc chromium-62.0.3192.0/chrome/browser/ui/views/tabs/new_tab_button.cc
---- chromium-62.0.3192.0.orig/chrome/browser/ui/views/tabs/new_tab_button.cc	2017-08-22 21:04:40.000000000 +0200
-+++ chromium-62.0.3192.0/chrome/browser/ui/views/tabs/new_tab_button.cc	2017-08-26 21:46:17.855765366 +0200
-@@ -133,15 +133,19 @@ void NewTabButton::PaintButtonContents(g
+diff -pruN chromium-61.0.3163.49.orig/chrome/browser/ui/views/tabs/new_tab_button.cc chromium-61.0.3163.49/chrome/browser/ui/views/tabs/new_tab_button.cc
+--- chromium-61.0.3163.49.orig/chrome/browser/ui/views/tabs/new_tab_button.cc	2017-08-16 21:05:06.000000000 +0200
++++ chromium-61.0.3163.49/chrome/browser/ui/views/tabs/new_tab_button.cc	2017-08-20 22:09:13.666778850 +0200
+@@ -116,15 +116,19 @@ void NewTabButton::PaintButtonContents(g
    const float fill_bottom = (visible_height - 2) * scale;
    const float diag_height = fill_bottom - 3.5 * scale;
    const float diag_width = diag_height * Tab::GetInverseDiagonalSlope();
@@ -23,7 +23,7 @@ diff -pruN chromium-62.0.3192.0.orig/chrome/browser/ui/views/tabs/new_tab_button
    fill.rCubicTo(0, 0.5 * scale, -0.25 * scale, scale, -scale, scale);
    fill.close();
    PaintFill(pressed, scale, fill, canvas);
-@@ -227,7 +231,7 @@ void NewTabButton::GetBorderPath(float b
+@@ -205,7 +209,7 @@ void NewTabButton::GetBorderPath(float b
    path->moveTo(diag_width + 4 * scale - 1, stroke_bottom);
    path->rCubicTo(-0.75 * scale, 0, -1.625 * scale, -0.5 * scale, -2 * scale,
                   -1.5 * scale);
@@ -32,7 +32,7 @@ diff -pruN chromium-62.0.3192.0.orig/chrome/browser/ui/views/tabs/new_tab_button
    if (extend_to_top) {
      // Create the vertical extension by extending the side diagonals at the
      // upper left and lower right corners until they reach the top and bottom of
-@@ -246,7 +250,7 @@ void NewTabButton::GetBorderPath(float b
+@@ -224,7 +228,7 @@ void NewTabButton::GetBorderPath(float b
      path->lineTo((width() - 4) * scale - diag_width + 1, button_y + scale - 1);
      path->rCubicTo(0.75 * scale, 0, 1.625 * scale, 0.5 * scale, 2 * scale,
                     1.5 * scale);
@@ -41,10 +41,10 @@ diff -pruN chromium-62.0.3192.0.orig/chrome/browser/ui/views/tabs/new_tab_button
      path->rCubicTo(0.5 * scale, 1.125 * scale, -0.5 * scale, scale + 2, -scale,
                     scale + 2);
    }
-diff -pruN chromium-62.0.3192.0.orig/chrome/browser/ui/views/tabs/tab.cc chromium-62.0.3192.0/chrome/browser/ui/views/tabs/tab.cc
---- chromium-62.0.3192.0.orig/chrome/browser/ui/views/tabs/tab.cc	2017-08-22 21:04:40.000000000 +0200
-+++ chromium-62.0.3192.0/chrome/browser/ui/views/tabs/tab.cc	2017-08-26 21:46:17.855765366 +0200
-@@ -145,12 +145,13 @@ gfx::Path GetFillPath(float scale, const
+diff -pruN chromium-61.0.3163.49.orig/chrome/browser/ui/views/tabs/tab.cc chromium-61.0.3163.49/chrome/browser/ui/views/tabs/tab.cc
+--- chromium-61.0.3163.49.orig/chrome/browser/ui/views/tabs/tab.cc	2017-08-16 21:05:06.000000000 +0200
++++ chromium-61.0.3163.49/chrome/browser/ui/views/tabs/tab.cc	2017-08-20 22:06:35.370107042 +0200
+@@ -147,12 +147,13 @@ gfx::Path GetFillPath(float scale, const
    // The bottom of the tab needs to be pixel-aligned or else when we call
    // ClipPath with anti-aliasing enabled it can cause artifacts.
    const float bottom = std::ceil(size.height() * scale);
@@ -60,7 +60,7 @@ diff -pruN chromium-62.0.3192.0.orig/chrome/browser/ui/views/tabs/tab.cc chromiu
    // Prevent overdraw in the center near minimum width (only happens if
    // scale < 2).  We could instead avoid this by increasing the tab inset
    // values, but that would shift all the content inward as well, unless we
-@@ -162,10 +163,10 @@ gfx::Path GetFillPath(float scale, const
+@@ -164,10 +165,10 @@ gfx::Path GetFillPath(float scale, const
    fill.rCubicTo(-0.375 * scale, -1 * scale, -1.25 * scale + offset,
                  -1.5 * scale, -2 * scale + offset, -1.5 * scale);
    if (overlap < 0)
@@ -73,7 +73,7 @@ diff -pruN chromium-62.0.3192.0.orig/chrome/browser/ui/views/tabs/tab.cc chromiu
    fill.rCubicTo(-0.375 * scale, scale, -1.25 * scale, 1.5 * scale, -2 * scale,
                  1.5 * scale);
    fill.close();
-@@ -186,13 +187,15 @@ gfx::Path GetBorderPath(float scale,
+@@ -188,13 +189,15 @@ gfx::Path GetBorderPath(float scale,
    const float top = scale - 1;
    const float right = size.width() * scale;
    const float bottom = size.height() * scale;
@@ -90,7 +90,7 @@ diff -pruN chromium-62.0.3192.0.orig/chrome/browser/ui/views/tabs/tab.cc chromiu
    if (extend_to_top) {
      // Create the vertical extension by extending the side diagonals until
      // they reach the top of the bounds.
-@@ -202,15 +205,16 @@ gfx::Path GetBorderPath(float scale,
+@@ -204,15 +207,16 @@ gfx::Path GetBorderPath(float scale,
      path.lineTo(right - (endcap_width - 2) * scale - dx, 0);
      path.rLineTo(dx, dy);
    } else {
