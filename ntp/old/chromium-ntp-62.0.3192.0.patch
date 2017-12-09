@@ -12,19 +12,117 @@ diff -pruN chromium-62.0.3192.0.orig/chrome/browser/extensions/extension_service
 -    ThumbnailSource* thumbnail_source = new ThumbnailSource(profile_, false);
 -    content::URLDataSource::Add(profile_, thumbnail_source);
 -  }
+ }
  
-   // When an existing extension is re-enabled, it may be necessary to spin up
-   // its lazy background page.
+ void ExtensionService::OnExtensionRegisteredWithRequestContexts(
+diff -pruN chromium-62.0.3192.0.orig/chrome/browser/resources/local_ntp/local_ntp.html chromium-62.0.3192.0/chrome/browser/resources/local_ntp/local_ntp.html
+--- chromium-62.0.3192.0.orig/chrome/browser/resources/local_ntp/local_ntp.html	2017-08-22 21:04:39.000000000 +0200
++++ chromium-62.0.3192.0/chrome/browser/resources/local_ntp/local_ntp.html	2017-08-26 21:54:50.662424862 +0200
+@@ -35,20 +35,6 @@
+         <div id="fakebox-speech" tabIndex="0" hidden></div>
+       </div>
+     </div>
+-    <div id="most-visited">
+-      <!-- The container for the tiles. The MV iframe goes in here. -->
+-      <div id="mv-tiles"></div>
+-      <!-- Notification shown when a tile is blacklisted. -->
+-      <div id="mv-notice" class="mv-notice-hide">
+-        <span id="mv-msg"></span>
+-        <!-- Links in the notification. -->
+-        <span id="mv-notice-links">
+-          <span id="mv-undo" tabIndex="1"></span>
+-          <span id="mv-restore" tabIndex="1"></span>
+-          <div id="mv-notice-x" tabIndex="1"></div>
+-        </span>
+-      </div>
+-    </div>
+     <div id="attribution"><div id="attribution-text"></div></div>
+   </div>
+ 
 diff -pruN chromium-62.0.3192.0.orig/chrome/browser/resources/local_ntp/local_ntp.js chromium-62.0.3192.0/chrome/browser/resources/local_ntp/local_ntp.js
 --- chromium-62.0.3192.0.orig/chrome/browser/resources/local_ntp/local_ntp.js	2017-08-22 21:04:39.000000000 +0200
 +++ chromium-62.0.3192.0/chrome/browser/resources/local_ntp/local_ntp.js	2017-08-26 21:54:50.662424862 +0200
-@@ -900,6 +900,3 @@ function reloadTiles() {
- 
+@@ -177,8 +177,6 @@ function renderTheme() {
+     titleColor = NTP_DESIGN.titleColorAgainstDark;
+   }
+   themeinfo.tileTitleColor = convertToRGBAColor(titleColor);
+-
+-  $(IDS.TILES_IFRAME).contentWindow.postMessage(themeinfo, '*');
  }
  
--if (!window.localNTPUnitTest) {
--  LocalNTP().listen();
--}
+ 
+@@ -477,33 +475,10 @@ function handlePostMessage(event) {
+  * section, and Google-specific elements for a Google-provided page.
+  */
+ function init() {
+-  // Hide notifications after fade out, so we can't focus on links via keyboard.
+-  $(IDS.NOTIFICATION).addEventListener('transitionend', hideNotification);
+-
+-  $(IDS.NOTIFICATION_MESSAGE).textContent =
+-      configData.translatedStrings.thumbnailRemovedNotification;
+-
+-  var undoLink = $(IDS.UNDO_LINK);
+-  undoLink.addEventListener('click', onUndo);
+-  registerKeyHandler(undoLink, KEYCODE.ENTER, onUndo);
+-  undoLink.textContent = configData.translatedStrings.undoThumbnailRemove;
+-
+-  var restoreAllLink = $(IDS.RESTORE_ALL_LINK);
+-  restoreAllLink.addEventListener('click', onRestoreAll);
+-  registerKeyHandler(restoreAllLink, KEYCODE.ENTER, onRestoreAll);
+-  restoreAllLink.textContent =
+-      configData.translatedStrings.restoreThumbnailsShort;
+-
+-  $(IDS.ATTRIBUTION_TEXT).textContent =
+-      configData.translatedStrings.attributionIntro;
+-
+-  $(IDS.NOTIFICATION_CLOSE_BUTTON).addEventListener('click', hideNotification);
+-
+   var embeddedSearchApiHandle = window.chrome.embeddedSearch;
+ 
+   ntpApiHandle = embeddedSearchApiHandle.newTabPage;
+   ntpApiHandle.onthemechange = onThemeChange;
+-  ntpApiHandle.onmostvisitedchange = onMostVisitedChange;
+ 
+   var searchboxApiHandle = embeddedSearchApiHandle.searchBox;
+ 
+@@ -606,20 +581,6 @@ function init() {
+ 
+   args.push('removeTooltip=' +
+       encodeURIComponent(configData.translatedStrings.removeThumbnailTooltip));
+-
+-  // Create the most visited iframe.
+-  var iframe = document.createElement('iframe');
+-  iframe.id = IDS.TILES_IFRAME;
+-  iframe.tabIndex = 1;
+-  iframe.src = 'chrome-search://most-visited/single.html?' + args.join('&');
+-  $(IDS.TILES).appendChild(iframe);
+-
+-  iframe.onload = function() {
+-    reloadTiles();
+-    renderTheme();
+-  };
+-
+-  window.addEventListener('message', handlePostMessage);
+ }
+ 
+ 
+diff -pruN chromium-62.0.3192.0.orig/chrome/browser/search/instant_service.cc chromium-62.0.3192.0/chrome/browser/search/instant_service.cc
+--- chromium-62.0.3192.0.orig/chrome/browser/search/instant_service.cc	2017-08-22 21:04:40.000000000 +0200
++++ chromium-62.0.3192.0/chrome/browser/search/instant_service.cc	2017-08-26 21:54:50.662424862 +0200
+@@ -123,13 +123,9 @@ InstantService::InstantService(Profile*
+ 
+   content::URLDataSource::Add(profile_, new ThemeSource(profile_));
+   content::URLDataSource::Add(profile_, new LocalNtpSource(profile_));
+-  content::URLDataSource::Add(profile_, new ThumbnailSource(profile_, false));
+-  content::URLDataSource::Add(profile_, new ThumbnailSource(profile_, true));
+-  content::URLDataSource::Add(profile_, new ThumbnailListSource(profile_));
+ #endif  // !defined(OS_ANDROID)
+ 
+   content::URLDataSource::Add(profile_, new FaviconSource(profile_));
+-  content::URLDataSource::Add(profile_, new MostVisitedIframeSource());
+ }
+ 
+ InstantService::~InstantService() = default;
 diff -pruN chromium-62.0.3192.0.orig/chrome/browser/search/search.cc chromium-62.0.3192.0/chrome/browser/search/search.cc
 --- chromium-62.0.3192.0.orig/chrome/browser/search/search.cc	2017-08-22 21:04:40.000000000 +0200
 +++ chromium-62.0.3192.0/chrome/browser/search/search.cc	2017-08-26 21:54:50.665758195 +0200
