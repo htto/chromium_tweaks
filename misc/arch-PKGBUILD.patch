@@ -1,0 +1,33 @@
+diff --git a/repos/extra-x86_64/PKGBUILD b/repos/extra-x86_64/PKGBUILD
+index 49cdb93..7df768b 100644
+--- a/repos/extra-x86_64/PKGBUILD
++++ b/repos/extra-x86_64/PKGBUILD
+@@ -29,6 +29,8 @@ source=(https://commondatastorage.googleapis.com/chromium-browser-official/$pkgn
+         chromium-exclude_unwind_tables.patch
+         chromium-clang-r1.patch
+         chromium-webrtc-r0.patch
++        chromium-ui.patch
++        chromium-ntp.patch
+         chromium-widevine.patch)
+ sha256sums=('6de2754dfc333675ae6a67ae13c95666009b35c84f847b058edbf312e42fa3af'
+             '4dc3428f2c927955d9ae117f2fb24d098cc6dd67adb760ac9c82b522ec8b0587'
+@@ -37,6 +39,8 @@ sha256sums=('6de2754dfc333675ae6a67ae13c95666009b35c84f847b058edbf312e42fa3af'
+             'e53dc6f259acd39df13874f8a0f440528fae764b859dd71447991a5b1fac7c9c'
+             'ab5368a3e3a67fa63b33fefc6788ad5b4a79089ef4db1011a14c3bee9fdf70c6'
+             'bcb2f4588cf5dcf75cde855c7431e94fdcc34bdd68b876a90f65ab9938594562'
++            'SKIP'
++            'SKIP'
+             'd6fdcb922e5a7fbe15759d39ccc8ea4225821c44d98054ce0f23f9d1f00c9808')
+ 
+ # Possible replacements are listed in build/linux/unbundle/replace_gn_files.py
+@@ -102,6 +106,10 @@ prepare() {
+     -e '/"-Wno-tautological-unsigned-enum-zero-compare"/d' \
+     build/config/compiler/BUILD.gn
+ 
++  # Customizations
++  patch -Np1 -i ../chromium-ui.patch
++  patch -Np1 -i ../chromium-ntp.patch
++
+   # Use Python 2
+   find . -name '*.py' -exec sed -i -r 's|/usr/bin/python$|&2|g' {} +
+ 
