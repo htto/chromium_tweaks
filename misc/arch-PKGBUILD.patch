@@ -1,27 +1,27 @@
 diff --git a/repos/extra-x86_64/PKGBUILD b/repos/extra-x86_64/PKGBUILD
-index 49cdb93..7df768b 100644
+index 3e0b44d..69a23ff 100644
 --- a/repos/extra-x86_64/PKGBUILD
 +++ b/repos/extra-x86_64/PKGBUILD
-@@ -29,6 +29,8 @@ source=(https://commondatastorage.googleapis.com/chromium-browser-official/$pkgn
+@@ -30,6 +30,8 @@ source=(https://commondatastorage.googleapis.com/chromium-browser-official/$pkgn
+         chromium-memcpy-r0.patch
+         chromium-clang-r2.patch
          chromium-exclude_unwind_tables.patch
-         chromium-clang-r1.patch
-         chromium-webrtc-r0.patch
 +        chromium-ui.patch
 +        chromium-ntp.patch
          chromium-widevine.patch)
- sha256sums=('6de2754dfc333675ae6a67ae13c95666009b35c84f847b058edbf312e42fa3af'
+ sha256sums=('342ea80a925d85f5155b2b423a0d3cbcf2ee5729bf107c601d7d902315d03127'
              '4dc3428f2c927955d9ae117f2fb24d098cc6dd67adb760ac9c82b522ec8b0587'
-@@ -37,6 +39,8 @@ sha256sums=('6de2754dfc333675ae6a67ae13c95666009b35c84f847b058edbf312e42fa3af'
-             'e53dc6f259acd39df13874f8a0f440528fae764b859dd71447991a5b1fac7c9c'
-             'ab5368a3e3a67fa63b33fefc6788ad5b4a79089ef4db1011a14c3bee9fdf70c6'
-             'bcb2f4588cf5dcf75cde855c7431e94fdcc34bdd68b876a90f65ab9938594562'
+@@ -40,6 +42,8 @@ sha256sums=('342ea80a925d85f5155b2b423a0d3cbcf2ee5729bf107c601d7d902315d03127'
+             '455f0029987d9f0532bd9a5250669af5146a9c2b65b776d4a6e2499e8aca7bb4'
+             '4495e8b29dae242c79ffe4beefc5171eb3c7aacb7e9aebfd2d4d69b9d8c958d3'
+             '9478f1ec1a3c53425306cf41c2d0555c215a4f106955d9d6adfff38044530ce8'
 +            'SKIP'
 +            'SKIP'
              'd6fdcb922e5a7fbe15759d39ccc8ea4225821c44d98054ce0f23f9d1f00c9808')
  
  # Possible replacements are listed in build/linux/unbundle/replace_gn_files.py
-@@ -102,6 +106,10 @@ prepare() {
-     -e '/"-Wno-tautological-unsigned-enum-zero-compare"/d' \
+@@ -121,6 +125,10 @@ prepare() {
+     -e '/"-Wno-tautological-constant-compare"/d' \
      build/config/compiler/BUILD.gn
  
 +  # Customizations
