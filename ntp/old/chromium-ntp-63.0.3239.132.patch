@@ -29,14 +29,14 @@ diff -pruN chromium-62.0.3192.0.orig/chrome/browser/search/search.cc chromium-62
 --- chromium-62.0.3192.0.orig/chrome/browser/search/search.cc	2017-08-22 21:04:40.000000000 +0200
 +++ chromium-62.0.3192.0/chrome/browser/search/search.cc	2017-08-26 21:54:50.665758195 +0200
 @@ -168,7 +168,7 @@ NewTabURLState IsValidNewTabURL(Profile*
-     if (!IsURLAllowedForSupervisedUser(search_provider_url, profile))
-       return NewTabURLDetails(local_url, NEW_TAB_URL_BLOCKED);
+     return NEW_TAB_URL_INSECURE;
+   if (!IsURLAllowedForSupervisedUser(new_tab_url, profile))
+     return NEW_TAB_URL_BLOCKED;
+-  return NEW_TAB_URL_VALID;
++  return NEW_TAB_URL_NOT_SET;
+ }
  
--    return NewTabURLDetails(search_provider_url, NEW_TAB_URL_VALID);
-+    return NewTabURLDetails(search_provider_url, NEW_TAB_URL_BLOCKED);
-   }
- 
-   const GURL url;
+ bool ShouldShowLocalNewTab(const GURL& url, Profile* profile) {
 diff -pruN chromium-62.0.3192.0.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc chromium-62.0.3192.0/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
 --- chromium-62.0.3192.0.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2017-08-22 21:04:40.000000000 +0200
 +++ chromium-62.0.3192.0/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2017-08-26 21:54:50.665758195 +0200
