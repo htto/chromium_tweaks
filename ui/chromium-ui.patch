@@ -1,0 +1,153 @@
+diff -pruNd chromium-66.0.3359.139/chrome/browser/ui/views/tabs/new_tab_button.cc chromium-66.0.3359.139/chrome/browser/ui/views/tabs/new_tab_button.cc
+--- chromium-66.0.3359.139/chrome/browser/ui/views/tabs/new_tab_button.cc	2018-04-27 00:04:35.000000000 +0200
++++ chromium-66.0.3359.139/chrome/browser/ui/views/tabs/new_tab_button.cc	2018-04-27 20:48:11.150416639 +0200
+@@ -230,15 +230,19 @@ void NewTabButton::PaintButtonContents(g
+     const float fill_bottom = (visible_height - 2) * scale;
+     const float diag_height = fill_bottom - 3.5 * scale;
+     const float diag_width = diag_height * Tab::GetInverseDiagonalSlope();
++    // bottom left
+     fill.moveTo(diag_width + 4 * scale, fill_bottom);
+     fill.rCubicTo(-0.75 * scale, 0, -1.625 * scale, -0.5 * scale, -2 * scale,
+                   -1.5 * scale);
+-    fill.rLineTo(-diag_width, -diag_height);
++    fill.rLineTo(0, -diag_height);
++    // top left
+     fill.rCubicTo(0, -0.5 * scale, 0.25 * scale, -scale, scale, -scale);
+     fill.lineTo((width() - 4) * scale - diag_width, scale);
++    // top right
+     fill.rCubicTo(0.75 * scale, 0, 1.625 * scale, 0.5 * scale, 2 * scale,
+                   1.5 * scale);
+-    fill.rLineTo(diag_width, diag_height);
++    fill.rLineTo(0, diag_height);
++    // bottom right
+     fill.rCubicTo(0, 0.5 * scale, -0.25 * scale, scale, -scale, scale);
+     fill.close();
+   }
+@@ -396,7 +400,7 @@ void NewTabButton::GetBorderPath(float b
+   path->moveTo(diag_width + 4 * scale - 1, stroke_bottom);
+   path->rCubicTo(-0.75 * scale, 0, -1.625 * scale, -0.5 * scale, -2 * scale,
+                  -1.5 * scale);
+-  path->rLineTo(-diag_width, -diag_height);
++  path->rLineTo(0, -diag_height);
+   if (extend_to_top) {
+     // Create the vertical extension by extending the side diagonals at the
+     // upper left and lower right corners until they reach the top and bottom of
+@@ -415,7 +419,7 @@ void NewTabButton::GetBorderPath(float b
+     path->lineTo((width() - 4) * scale - diag_width + 1, button_y + scale - 1);
+     path->rCubicTo(0.75 * scale, 0, 1.625 * scale, 0.5 * scale, 2 * scale,
+                    1.5 * scale);
+-    path->rLineTo(diag_width, diag_height);
++    path->rLineTo(0, diag_height);
+     path->rCubicTo(0.5 * scale, 1.125 * scale, -0.5 * scale, scale + 2, -scale,
+                    scale + 2);
+   }
+diff -pruNd chromium-66.0.3359.139/chrome/browser/ui/views/tabs/tab.cc chromium-66.0.3359.139/chrome/browser/ui/views/tabs/tab.cc
+--- chromium-66.0.3359.139/chrome/browser/ui/views/tabs/tab.cc	2018-04-27 00:04:35.000000000 +0200
++++ chromium-66.0.3359.139/chrome/browser/ui/views/tabs/tab.cc	2018-04-27 20:57:30.630407693 +0200
+@@ -126,46 +126,22 @@ gfx::Path GetInteriorPath(float scale,
+                           const gfx::Size& size,
+                           float endcap_width,
+                           float horizontal_inset = 0) {
+-  const float right = size.width() * scale;
++  const float inset = (endcap_width / 2 + 2) * scale;
++  const float top = 2.5 * scale;
++  const float left = inset;
++  const float right = size.width() * scale - inset;
+   // The bottom of the tab needs to be pixel-aligned or else when we call
+   // ClipPath with anti-aliasing enabled it can cause artifacts.
+   const float bottom = std::ceil(size.height() * scale);
+ 
+-  const float scaled_horizontal_inset = horizontal_inset * scale;
+-
+-  // Construct the interior path by intersecting paths representing the left
+-  // and right halves of the tab.  Compared to computing the full path at once,
+-  // this makes it easier to avoid overdraw in the top center near minimum
+-  // width, and to implement cases where |horizontal_inset| != 0.
+-  gfx::Path right_path;
+-  right_path.moveTo(right - 1 - scaled_horizontal_inset, bottom);
+-  right_path.rCubicTo(-0.75 * scale, 0, -1.625 * scale, -0.5 * scale,
+-                      -2 * scale, -1.5 * scale);
+-  right_path.lineTo(
+-      right - 1 - scaled_horizontal_inset - (endcap_width - 2) * scale,
+-      2.5 * scale);
+-  right_path.rCubicTo(-0.375 * scale, -1 * scale, -1.25 * scale, -1.5 * scale,
+-                      -2 * scale, -1.5 * scale);
+-  right_path.lineTo(0, scale);
+-  right_path.lineTo(0, bottom);
+-  right_path.close();
+-
+-  gfx::Path left_path;
+-  const float scaled_endcap_width = 1 + endcap_width * scale;
+-  left_path.moveTo(scaled_endcap_width + scaled_horizontal_inset, scale);
+-  left_path.rCubicTo(-0.75 * scale, 0, -1.625 * scale, 0.5 * scale, -2 * scale,
+-                     1.5 * scale);
+-  left_path.lineTo(1 + scaled_horizontal_inset + 2 * scale,
+-                   bottom - 1.5 * scale);
+-  left_path.rCubicTo(-0.375 * scale, scale, -1.25 * scale, 1.5 * scale,
+-                     -2 * scale, 1.5 * scale);
+-  left_path.lineTo(right, bottom);
+-  left_path.lineTo(right, scale);
+-  left_path.close();
++  gfx::Path path;
++  path.moveTo(left, bottom); // lb
++  path.lineTo(left, top); // lt
++  path.lineTo(right, top); // rt
++  path.lineTo(right, bottom); // rb
++  path.close();
+ 
+-  gfx::Path complete_path;
+-  Op(left_path, right_path, SkPathOp::kIntersect_SkPathOp, &complete_path);
+-  return complete_path;
++  return path;
+ }
+ 
+ // Returns a path corresponding to the tab's outer border for a given tab
+@@ -179,35 +155,22 @@ gfx::Path GetBorderPath(float scale,
+                         bool extend_to_top,
+                         float endcap_width,
+                         const gfx::Size& size) {
+-  const float top = scale - 1;
+-  const float right = size.width() * scale;
+-  const float bottom = size.height() * scale;
++  const float inset = (endcap_width / 2 + 1) * scale;
++  const float top = extend_to_top ? 0 : scale - 1;
++  const float left = inset;
++  const float right = size.width() * scale - inset;
++  const float bottom = std::ceil(size.height() * scale);
+ 
++  // The path contains a 1px line at the bottom to (probably) avoid artifacts
+   gfx::Path path;
+   path.moveTo(0, bottom);
+-  path.rLineTo(0, -1);
+-  path.rCubicTo(0.75 * scale, 0, 1.625 * scale, -0.5 * scale, 2 * scale,
+-                -1.5 * scale);
+-  path.lineTo((endcap_width - 2) * scale, top + 1.5 * scale);
+-  if (extend_to_top) {
+-    // Create the vertical extension by extending the side diagonals until
+-    // they reach the top of the bounds.
+-    const float dy = 2.5 * scale - 1;
+-    const float dx = Tab::GetInverseDiagonalSlope() * dy;
+-    path.rLineTo(dx, -dy);
+-    path.lineTo(right - (endcap_width - 2) * scale - dx, 0);
+-    path.rLineTo(dx, dy);
+-  } else {
+-    path.rCubicTo(0.375 * scale, -scale, 1.25 * scale, -1.5 * scale, 2 * scale,
+-                  -1.5 * scale);
+-    path.lineTo(right - endcap_width * scale, top);
+-    path.rCubicTo(0.75 * scale, 0, 1.625 * scale, 0.5 * scale, 2 * scale,
+-                  1.5 * scale);
+-  }
+-  path.lineTo(right - 2 * scale, bottom - 1 - 1.5 * scale);
+-  path.rCubicTo(0.375 * scale, scale, 1.25 * scale, 1.5 * scale, 2 * scale,
+-                1.5 * scale);
+-  path.rLineTo(0, 1);
++  path.rLineTo(0, -1); // 1px anti-artifact up
++  path.rLineTo(inset, 0); // lb
++  path.lineTo(left, top); // lt
++  path.lineTo(right, top); // rt
++  path.lineTo(right, bottom - 1); // rb
++  path.rLineTo(inset, 0);
++  path.rLineTo(0, 1); // 1px anti-artifact back down
+   path.close();
+ 
+   if (unscale_at_end && (scale != 1))
