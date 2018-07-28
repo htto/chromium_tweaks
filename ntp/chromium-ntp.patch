@@ -1,0 +1,135 @@
+diff -pruN chromium-68.0.3440.75.orig/chrome/browser/extensions/extension_service.cc chromium-68.0.3440.75/chrome/browser/extensions/extension_service.cc
+--- chromium-68.0.3440.75.orig/chrome/browser/extensions/extension_service.cc	2018-07-25 00:08:20.000000000 +0200
++++ chromium-68.0.3440.75/chrome/browser/extensions/extension_service.cc	2018-07-27 20:46:54.736878776 +0200
+@@ -937,13 +937,6 @@ void ExtensionService::PostActivateExten
+     ThemeSource* theme_source = new ThemeSource(profile_);
+     content::URLDataSource::Add(profile_, theme_source);
+   }
+-
+-  // Same for chrome://thumb/ resources.
+-  if (permissions_data->HasHostPermission(
+-          GURL(chrome::kChromeUIThumbnailURL))) {
+-    ThumbnailSource* thumbnail_source = new ThumbnailSource(profile_, false);
+-    content::URLDataSource::Add(profile_, thumbnail_source);
+-  }
+ }
+ 
+ // TODO(michaelpg): Group with other ExtensionRegistrar::Delegate overrides
+diff -pruN chromium-68.0.3440.75.orig/chrome/browser/resources/local_ntp/local_ntp.js chromium-68.0.3440.75/chrome/browser/resources/local_ntp/local_ntp.js
+--- chromium-68.0.3440.75.orig/chrome/browser/resources/local_ntp/local_ntp.js	2018-07-25 00:08:22.000000000 +0200
++++ chromium-68.0.3440.75/chrome/browser/resources/local_ntp/local_ntp.js	2018-07-27 20:46:54.740212109 +0200
+@@ -1348,6 +1348,3 @@ return {
+ 
+ }
+ 
+-if (!window.localNTPUnitTest) {
+-  LocalNTP().listen();
+-}
+diff -pruN chromium-68.0.3440.75.orig/chrome/browser/search/search.cc chromium-68.0.3440.75/chrome/browser/search/search.cc
+--- chromium-68.0.3440.75.orig/chrome/browser/search/search.cc	2018-07-25 00:08:22.000000000 +0200
++++ chromium-68.0.3440.75/chrome/browser/search/search.cc	2018-07-27 20:46:54.740212109 +0200
+@@ -209,7 +209,7 @@ struct NewTabURLDetails {
+     if (!IsURLAllowedForSupervisedUser(search_provider_url, profile))
+       return NewTabURLDetails(local_url, NEW_TAB_URL_BLOCKED);
+ 
+-    return NewTabURLDetails(search_provider_url, NEW_TAB_URL_VALID);
++    return NewTabURLDetails(search_provider_url, NEW_TAB_URL_BLOCKED);
+   }
+ 
+   const GURL url;
+diff -pruN chromium-68.0.3440.75.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc chromium-68.0.3440.75/chrome/browser/ui/search/search_ipc_router_policy_impl.cc
+--- chromium-68.0.3440.75.orig/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2018-07-25 00:08:23.000000000 +0200
++++ chromium-68.0.3440.75/chrome/browser/ui/search/search_ipc_router_policy_impl.cc	2018-07-27 20:46:54.740212109 +0200
+@@ -27,15 +27,15 @@ bool SearchIPCRouterPolicyImpl::ShouldPr
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldProcessDeleteMostVisitedItem() {
+-  return !is_incognito_ && search::IsInstantNTP(web_contents_);
++  return false;
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldProcessUndoMostVisitedDeletion() {
+-  return !is_incognito_ && search::IsInstantNTP(web_contents_);
++  return false;
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldProcessUndoAllMostVisitedDeletions() {
+-  return !is_incognito_ && search::IsInstantNTP(web_contents_);
++  return false;
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldProcessLogEvent() {
+@@ -65,7 +65,7 @@ bool SearchIPCRouterPolicyImpl::ShouldSe
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldSendMostVisitedItems() {
+-  return !is_incognito_ && search::IsInstantNTP(web_contents_);
++  return false;
+ }
+ 
+ bool SearchIPCRouterPolicyImpl::ShouldSendThemeBackgroundInfo() {
+diff -pruN chromium-68.0.3440.75.orig/components/history/core/browser/top_sites_backend.cc chromium-68.0.3440.75/components/history/core/browser/top_sites_backend.cc
+--- chromium-68.0.3440.75.orig/components/history/core/browser/top_sites_backend.cc	2018-07-25 00:08:30.000000000 +0200
++++ chromium-68.0.3440.75/components/history/core/browser/top_sites_backend.cc	2018-07-27 20:46:54.740212109 +0200
+@@ -24,7 +24,7 @@
+ namespace history {
+ 
+ TopSitesBackend::TopSitesBackend()
+-    : db_(new TopSitesDatabase()),
++    : db_(static_cast< TopSitesDatabase *> (NULL)),
+       db_task_runner_(base::CreateSequencedTaskRunnerWithTraits(
+           {base::TaskPriority::USER_VISIBLE,
+            base::TaskShutdownBehavior::BLOCK_SHUTDOWN, base::MayBlock()})) {
+@@ -33,52 +33,30 @@ TopSitesBackend::TopSitesBackend()
+ 
+ void TopSitesBackend::Init(const base::FilePath& path) {
+   db_path_ = path;
+-  db_task_runner_->PostTask(
+-      FROM_HERE, base::Bind(&TopSitesBackend::InitDBOnDBThread, this, path));
+ }
+ 
+ void TopSitesBackend::Shutdown() {
+-  db_task_runner_->PostTask(
+-      FROM_HERE, base::Bind(&TopSitesBackend::ShutdownDBOnDBThread, this));
+ }
+ 
+ void TopSitesBackend::GetMostVisitedThumbnails(
+     const GetMostVisitedThumbnailsCallback& callback,
+     base::CancelableTaskTracker* tracker) {
+-  scoped_refptr<MostVisitedThumbnails> thumbnails = new MostVisitedThumbnails();
+-  tracker->PostTaskAndReply(
+-      db_task_runner_.get(), FROM_HERE,
+-      base::Bind(&TopSitesBackend::GetMostVisitedThumbnailsOnDBThread, this,
+-                 thumbnails),
+-      base::Bind(callback, thumbnails));
+ }
+ 
+ void TopSitesBackend::UpdateTopSites(const TopSitesDelta& delta,
+                                      const RecordHistogram record_or_not) {
+-  db_task_runner_->PostTask(
+-      FROM_HERE,
+-      base::Bind(&TopSitesBackend::UpdateTopSitesOnDBThread, this, delta,
+-                 record_or_not));
+ }
+ 
+ void TopSitesBackend::SetPageThumbnail(const MostVisitedURL& url,
+                                        int url_rank,
+                                        const Images& thumbnail) {
+-  db_task_runner_->PostTask(
+-      FROM_HERE, base::Bind(&TopSitesBackend::SetPageThumbnailOnDBThread, this,
+-                            url, url_rank, thumbnail));
+ }
+ 
+ void TopSitesBackend::ResetDatabase() {
+-  db_task_runner_->PostTask(
+-      FROM_HERE,
+-      base::Bind(&TopSitesBackend::ResetDatabaseOnDBThread, this, db_path_));
+ }
+ 
+ void TopSitesBackend::DoEmptyRequest(const base::Closure& reply,
+                                      base::CancelableTaskTracker* tracker) {
+-  tracker->PostTaskAndReply(db_task_runner_.get(), FROM_HERE, base::DoNothing(),
+-                            reply);
+ }
+ 
+ TopSitesBackend::~TopSitesBackend() {
